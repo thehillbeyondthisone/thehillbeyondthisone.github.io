@@ -1,627 +1,1015 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THEHILLBEYONDTHISONE</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #030D14;
+  --ph:   #52E0EE;
+  --ph2:  #1A8898;
+  --ph3:  #0B3040;
+  --bdr:  #1A6070;
+  --glow: rgba(82,224,238,.55);
+  --glw2: rgba(82,224,238,.2);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ph);font-family:'IBM Plex Mono',monospace;display:flex;flex-direction:column;position:relative}
+body::before{content:'';position:fixed;inset:0;z-index:900;background:repeating-linear-gradient(0deg,transparent 0px,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:901;background:radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.84) 100%);pointer-events:none}
 
-  <!-- Bookmark / SEO meta -->
-  <title>thehillbeyondthisone — terminal</title>
-  <meta name="description" content="Developer. Builder of RubiKit and WhatIfWe. On vacation." />
-  <meta name="author" content="thehillbeyondthisone" />
-  <meta property="og:title"       content="thehillbeyondthisone" />
-  <meta property="og:description" content="Developer. Builder of RubiKit and WhatIfWe." />
-  <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://thehillbeyondthisone.github.io" />
-  <meta name="theme-color"        content="#0a0900" />
+/* ── HEADER ── */
+#hbar{flex-shrink:0;height:38px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid var(--bdr);background:rgba(0,18,28,.9);position:relative;z-index:200;gap:0}
+.h-ident{font-size:11px;font-weight:500;letter-spacing:.22em;text-shadow:0 0 10px var(--glow),0 0 24px rgba(82,224,238,.28);border:1px solid var(--bdr);padding:4px 14px;background:rgba(82,224,238,.04)}
+.h-mid{flex:1;text-align:center;font-size:9px;letter-spacing:.2em;color:var(--ph);text-shadow:0 0 8px var(--glow)}
+.h-right{display:flex;align-items:center;gap:12px}
+.h-globe{width:15px;height:15px;border:1.5px solid var(--ph2);border-radius:50%;position:relative;flex-shrink:0;opacity:.65}
+.h-globe::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--ph2);transform:translateY(-50%)}
+.h-globe::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--ph2);transform:translateX(-50%)}
+.h-btn{font-size:8px;letter-spacing:.15em;color:var(--ph2);cursor:pointer;border:1px solid var(--bdr);padding:3px 9px;transition:all .15s;user-select:none;white-space:nowrap}
+.h-btn:hover{color:var(--ph);border-color:var(--ph);box-shadow:0 0 8px var(--glw2)}
+#gear-btn{font-size:13px;line-height:1;border:1px solid var(--bdr);padding:3px 7px;cursor:pointer;color:var(--ph2);transition:all .18s;user-select:none;display:none}
+#gear-btn.unlocked{display:block}
+#gear-btn:hover{color:var(--ph);border-color:var(--ph);box-shadow:0 0 8px var(--glw2)}
+#gear-btn.active{color:var(--ph);border-color:var(--ph);background:rgba(82,224,238,.06)}
 
-  <!-- Favicon — generated inline as SVG -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
-      <rect width='32' height='32' fill='%230a0900'/>
-      <rect x='3' y='3' width='26' height='26' rx='2'
-            fill='none' stroke='%23d4892a' stroke-width='1.5'/>
-      <text x='7' y='22' font-family='monospace' font-size='15'
-            font-weight='bold' fill='%23d4892a'>&#x3E;_</text>
-    </svg>" />
+/* ── ARC ── */
+#arc{position:absolute;top:38px;left:0;right:0;height:24px;overflow:hidden;z-index:199;pointer-events:none}
+#arc svg{width:100%;height:100%}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+/* ── CANVAS FIELD ── */
+#field{flex:1;position:relative;overflow:hidden;cursor:crosshair}
+#fc{position:absolute;inset:0;width:100%;height:100%}
 
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* repo nodes — positioned absolutely over canvas */
+.rnode{
+  position:absolute;border:1px solid var(--ph);border-radius:3px;
+  background:rgba(3,13,20,.93);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;
+  transition:box-shadow .18s,border-color .18s,transform .18s;z-index:50;
+  pointer-events:all;transform-origin:center center;
+}
+.rnode:hover{border-color:var(--ph);box-shadow:0 0 20px var(--glow),0 0 3px var(--glow),inset 0 0 14px rgba(82,224,238,.07);transform:scale(1.09)}
+.rnode-pulse{position:absolute;inset:-5px;border:1px solid var(--ph);border-radius:4px;animation:rpulse 2.6s ease-in-out infinite;pointer-events:none;opacity:0}
+@keyframes rpulse{0%{opacity:.55;transform:scale(1)}100%{opacity:0;transform:scale(1.2)}}
+.rnode-no{font-size:6.5px;letter-spacing:.2em;color:var(--ph2);margin-bottom:2px}
+.rnode-nm{font-weight:600;letter-spacing:.09em;color:var(--ph);text-shadow:0 0 8px var(--glow);text-align:center;line-height:1.2}
 
-    :root {
-      --bg:       #0a0900;
-      --amber:    #d4892a;
-      --amber2:   #a86a18;
-      --amber3:   #5a3808;
-      --dim:      #3a2a10;
-      --bright:   #f0b84a;
-      --green:    #6aaa6a;
-      --muted:    #6a5030;
-      --scanline: rgba(0,0,0,0.18);
-    }
+/* ── BINS ── */
+#bins{flex-shrink:0;height:68px;background:rgba(0,16,26,.92);border-top:1px solid var(--bdr);display:flex;z-index:200}
+.bin{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-right:1px solid var(--ph3);padding:7px 5px;cursor:pointer;transition:background .15s;position:relative;overflow:hidden}
+.bin:last-child{border-right:none}
+.bin:hover{background:rgba(82,224,238,.05)}
+.bin.lit{background:rgba(82,224,238,.1)}
+.bin-no{font-size:8px;letter-spacing:.2em;color:var(--ph2)}
+.bin-nm{font-size:7px;letter-spacing:.12em;color:var(--ph);text-shadow:0 0 6px var(--glow);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:96%}
+.bin-track{width:88%;height:7px;border:1px solid var(--bdr);background:rgba(0,0,0,.5);overflow:hidden}
+.bin-fill{height:100%;background:var(--ph2);box-shadow:0 0 5px var(--glow);transition:width .32s ease}
+.bin-pct{font-size:7.5px;letter-spacing:.12em;color:var(--ph)}
 
-    html, body { height: 100%; }
+/* ── HEXBAR ── */
+#hexbar{flex-shrink:0;height:21px;display:flex;align-items:center;justify-content:center;font-size:8.5px;letter-spacing:.22em;color:var(--ph2);border-top:1px solid var(--ph3);background:rgba(0,6,12,.92);z-index:200}
 
-    body {
-      background: var(--bg);
-      color: var(--amber);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
-      cursor: none;
-    }
+/* ── SETTINGS PANEL ── */
+#settings{
+  position:fixed;top:38px;right:0;
+  width:290px;
+  max-height:calc(100vh - 38px - 89px);
+  overflow-y:auto;
+  background:rgba(2,10,18,.97);
+  border-left:1px solid var(--bdr);
+  border-bottom:1px solid var(--bdr);
+  z-index:600;
+  transform:translateY(-8px);
+  opacity:0;pointer-events:none;
+  transition:transform .24s cubic-bezier(.4,0,.2,1),opacity .2s ease;
+  box-shadow:-6px 6px 28px rgba(0,0,0,.8);
+}
+#settings::-webkit-scrollbar{width:3px}
+#settings::-webkit-scrollbar-thumb{background:var(--ph3)}
+#settings.open{transform:translateY(0);opacity:1;pointer-events:all}
+.set-head{padding:12px 16px 10px;border-bottom:1px solid var(--ph3);font-size:8px;letter-spacing:.22em;color:var(--ph2)}
+.set-body{padding:14px 16px}
+.set-section{margin-bottom:18px}
+.set-lbl{font-size:7.5px;letter-spacing:.2em;color:var(--ph2);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--ph3)}
 
-    /* ── CRT scanlines ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px, transparent 2px,
-        var(--scanline) 2px, var(--scanline) 4px
-      );
-      pointer-events: none;
-      z-index: 50;
-    }
+/* slider rows */
+.srow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px}
+.srow-lbl{font-size:8px;letter-spacing:.13em;color:var(--ph);flex-shrink:0;width:110px}
+.srow-val{font-size:9px;letter-spacing:.1em;color:var(--ph);flex-shrink:0;width:28px;text-align:right;text-shadow:0 0 5px var(--glow)}
+input[type=range]{
+  flex:1;-webkit-appearance:none;appearance:none;height:3px;
+  background:var(--ph3);outline:none;cursor:pointer;
+  border:none;border-radius:0;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:10px;height:10px;
+  background:var(--ph);border:none;cursor:pointer;border-radius:0;
+  box-shadow:0 0 6px var(--glow);
+}
+input[type=range]::-moz-range-thumb{
+  width:10px;height:10px;background:var(--ph);border:none;border-radius:0;box-shadow:0 0 6px var(--glow);cursor:pointer;
+}
 
-    /* ── CRT flicker ── */
-    body::after {
-      content: '';
-      position: fixed; inset: 0;
-      background: radial-gradient(ellipse at center,
-        transparent 60%, rgba(0,0,0,0.55) 100%);
-      pointer-events: none;
-      z-index: 51;
-      animation: flicker 8s ease-in-out infinite;
-    }
-    @keyframes flicker {
-      0%,100% { opacity: 1; }
-      92%      { opacity: 1; }
-      93%      { opacity: 0.85; }
-      94%      { opacity: 1; }
-      97%      { opacity: 0.92; }
-      98%      { opacity: 1; }
-    }
+/* toggle rows for repos */
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.trow-lbl{font-size:8px;letter-spacing:.13em;color:var(--ph)}
+.tog{
+  width:28px;height:13px;background:var(--ph3);border:1px solid var(--bdr);
+  position:relative;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0;
+}
+.tog.on{background:rgba(82,224,238,.2);border-color:var(--ph)}
+.tog::after{
+  content:'';position:absolute;top:1px;left:1px;
+  width:9px;height:9px;background:var(--ph2);
+  transition:transform .2s,background .2s;
+}
+.tog.on::after{transform:translateX(15px);background:var(--ph)}
 
-    /* ── Background character grid ── */
-    #char-grid {
-      position: fixed; inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
+/* ── INSPECTOR ── */
+#inspector{
+  position:fixed;top:38px;right:0;bottom:89px;width:320px;
+  background:rgba(2,10,18,.97);border-left:1px solid var(--bdr);
+  z-index:500;transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;box-shadow:-6px 0 28px rgba(0,0,0,.7);
+}
+#inspector.open{transform:translateX(0)}
+.ins-head{padding:15px 18px 13px;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.ins-title{font-size:14px;font-weight:500;letter-spacing:.07em;text-shadow:0 0 10px var(--glow)}
+.ins-sub{font-size:7px;letter-spacing:.2em;color:var(--ph2);margin-top:4px}
+.ins-close{font-size:20px;color:var(--ph2);cursor:pointer;line-height:1;transition:color .12s;flex-shrink:0}
+.ins-close:hover{color:var(--ph);text-shadow:0 0 8px var(--glow)}
+.ins-nav{font-size:11px;color:var(--ph2);cursor:pointer;border:1px solid var(--bdr);padding:2px 7px;transition:all .12s;user-select:none;line-height:1.6}
+.ins-nav:hover{color:var(--ph);border-color:var(--ph);box-shadow:0 0 6px var(--glw2)}
+.ins-body{flex:1;overflow-y:auto;padding:16px 18px}
+.ins-body::-webkit-scrollbar{width:2px}
+.ins-body::-webkit-scrollbar-thumb{background:var(--ph3)}
+.ins-sec{margin-bottom:18px}
+.ins-sec-lbl{font-size:7.5px;letter-spacing:.22em;color:var(--ph2);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--ph3)}
+.ins-desc{font-size:10px;line-height:1.95;color:rgba(82,224,238,.78);letter-spacing:.04em;border-left:2px solid var(--ph3);padding-left:12px}
+.ins-tags{display:flex;flex-wrap:wrap;gap:5px}
+.ins-tag{font-size:7.5px;letter-spacing:.13em;border:1px solid var(--bdr);padding:2px 8px;color:var(--ph2);background:rgba(82,224,238,.03)}
+.ins-kv{display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.12em;margin-bottom:7px}
+.ins-k{color:var(--ph2)}.ins-v{color:var(--ph);text-shadow:0 0 5px var(--glw2)}
+.ins-prog-track{height:7px;background:var(--ph3);border:1px solid var(--bdr);overflow:hidden;margin-bottom:4px}
+.ins-prog-fill{height:100%;background:var(--ph);box-shadow:0 0 6px var(--glow);transition:width .55s .08s ease}
+.ins-link{display:flex;align-items:center;justify-content:center;gap:8px;font-size:8.5px;letter-spacing:.15em;color:var(--ph);text-decoration:none;border:1px solid var(--bdr);padding:9px 16px;transition:background .15s,box-shadow .15s;margin-top:4px}
+.ins-link:hover{background:rgba(82,224,238,.08);box-shadow:0 0 12px var(--glw2)}
 
-    /* ── Custom cursor ── */
-    .cursor {
-      position: fixed;
-      pointer-events: none;
-      z-index: 999;
-      transform: translate(-50%, -50%);
-      color: var(--amber);
-      font-size: 14px;
-      line-height: 1;
-      transition: opacity 0.15s;
-      text-shadow: 0 0 8px var(--amber);
-    }
+/* ── BURST / TRAIL ── */
+@keyframes burst{0%{transform:scale(1);opacity:1}100%{transform:scale(4);opacity:0}}
+.burst{position:fixed;pointer-events:none;z-index:2000;width:20px;height:20px;margin:-10px 0 0 -10px;border:1px solid var(--ph);border-radius:50%;animation:burst .38s ease-out forwards}
+@keyframes trail{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(.1)}}
+.trail{position:fixed;pointer-events:none;z-index:1999;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;background:var(--ph);border-radius:50%;animation:trail .48s ease-out forwards}
 
-    /* ── Page content ── */
-    .page {
-      position: relative;
-      z-index: 10;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 3.5rem 1.5rem 4rem;
-    }
+/* ── BOOT ── */
+#boot{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;pointer-events:none;transition:opacity .5s ease}
+#boot.done{opacity:0}
+.boot-line{font-size:9px;letter-spacing:.22em;color:var(--ph2);opacity:0;transition:opacity .25s ease}
+.boot-line.vis{opacity:1}
+#boot-cursor{display:inline-block;width:7px;height:12px;background:var(--ph);animation:bcur .7s step-end infinite;vertical-align:middle;margin-left:3px}
+@keyframes bcur{0%,100%{opacity:1}50%{opacity:0}}
 
-    .terminal {
-      width: 100%;
-      max-width: 680px;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    /* ── Header box ── */
-    .header-box {
-      border: 1px solid var(--amber3);
-      padding: 1.1rem 1.4rem 1rem;
-      margin-bottom: 2.2rem;
-      position: relative;
-      opacity: 0;
-      animation: appear 0.01s forwards 0.05s;
-    }
-    .header-box::before {
-      content: '';
-      position: absolute;
-      inset: 3px;
-      border: 1px solid var(--amber3);
-      opacity: 0.3;
-      pointer-events: none;
-    }
-    .header-sys {
-      font-size: 0.62rem;
-      letter-spacing: 0.18em;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
-    }
-    .header-name {
-      font-size: 1.65rem;
-      font-weight: bold;
-      color: var(--bright);
-      letter-spacing: 0.06em;
-      text-shadow: 0 0 18px rgba(240,184,74,0.4);
-      margin-bottom: 0.35rem;
-    }
-    .header-copy {
-      font-size: 0.6rem;
-      letter-spacing: 0.16em;
-      color: var(--muted);
-    }
-
-    /* ── Terminal blocks ── */
-    .block { margin-bottom: 1.8rem; }
-
-    .prompt {
-      color: var(--amber);
-      margin-bottom: 0.55rem;
-    }
-    .prompt::before { content: '> '; }
-
-    .output { padding-left: 0.5rem; }
-
-    /* Boot sequence */
-    .boot-line {
-      color: var(--amber2);
-      display: flex;
-      gap: 0.4rem;
-      opacity: 0;
-    }
-    .boot-dots { color: var(--dim); }
-    .boot-ok   { color: var(--green); margin-left: auto; }
-
-    /* whoami */
-    .whoami-name {
-      color: var(--bright);
-      font-size: 1.05rem;
-      margin-bottom: 0.2rem;
-      text-shadow: 0 0 10px rgba(240,184,74,0.3);
-    }
-    .whoami-status { color: var(--amber2); }
-
-    /* ls projects */
-    .project-row {
-      display: flex;
-      align-items: baseline;
-      gap: 0.75rem;
-      padding: 0.2rem 0;
-      flex-wrap: wrap;
-    }
-    .perm  { color: var(--dim); font-size: 0.78rem; }
-    .pname {
-      color: var(--bright);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.2s, text-shadow 0.2s;
-      padding: 0 0.15rem;
-    }
-    .pname:hover {
-      border-color: var(--amber);
-      text-shadow: 0 0 12px rgba(240,184,74,0.5);
-    }
-    .plang   { color: var(--muted); min-width: 2.5rem; }
-    .pstars  { color: var(--amber2); letter-spacing: 0.05em; }
-    .popen {
-      color: var(--amber);
-      border: 1px solid var(--amber3);
-      padding: 0 0.35rem;
-      font-size: 0.78rem;
-      text-decoration: none;
-      margin-left: auto;
-      transition: border-color 0.2s, color 0.2s, background 0.2s, box-shadow 0.2s;
-      white-space: nowrap;
-    }
-    .popen:hover {
-      border-color: var(--amber);
-      color: var(--bg);
-      background: var(--amber);
-      box-shadow: 0 0 12px rgba(212,137,42,0.4);
-    }
-    .pdesc {
-      width: 100%;
-      padding-left: 0;
-      color: var(--muted);
-      font-size: 0.75rem;
-      margin-top: 0.15rem;
-      padding-left: 0.5rem;
-    }
-    .pdesc::before { content: '# '; color: var(--dim); }
-
-    /* contact */
-    .contact-row {
-      display: flex;
-      gap: 1.5rem;
-      padding: 0.15rem 0;
-    }
-    .ckey   { color: var(--amber2); min-width: 4.5rem; }
-    .cval   {
-      color: var(--amber);
-      text-decoration: none;
-      transition: color 0.2s, text-shadow 0.2s;
-    }
-    .cval:hover {
-      color: var(--bright);
-      text-shadow: 0 0 10px rgba(240,184,74,0.4);
-    }
-
-    /* Blinking cursor */
-    .blink-cursor {
-      display: inline-block;
-      width: 0.55rem;
-      height: 1em;
-      background: var(--amber);
-      vertical-align: text-bottom;
-      animation: blink 1.1s step-end infinite;
-      margin-left: 0.1rem;
-    }
-    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
-
-    /* Audio toggle */
-    .audio-btn {
-      position: fixed;
-      top: 1rem; right: 1.2rem;
-      z-index: 100;
-      background: none;
-      border: 1px solid var(--amber3);
-      color: var(--muted);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.12em;
-      padding: 0.3rem 0.55rem;
-      cursor: none;
-      transition: color 0.2s, border-color 0.2s;
-    }
-    .audio-btn:hover { color: var(--amber); border-color: var(--amber2); }
-    .audio-btn.on    { color: var(--green); border-color: var(--green); }
-
-    @keyframes appear { to { opacity: 1; } }
-
-    @media (max-width: 480px) {
-      body { cursor: auto; }
-      .cursor { display: none; }
-      .project-row { gap: 0.4rem; }
-    }
-  </style>
+/* ── FLICKER ── */
+@keyframes flicker{0%,100%{opacity:1}49%{opacity:1}50%{opacity:.88}51%{opacity:1}74%{opacity:.95}75%{opacity:1}}
+</style>
 </head>
 <body>
 
-  <canvas id="char-grid"></canvas>
-  <div class="cursor" id="cursor">▮</div>
-  <button class="audio-btn" id="audio-btn" title="Toggle sound">[ SND: OFF ]</button>
+<div id="hbar">
+  <div class="h-ident">THEHILLBEYONDTHISONE</div>
+  <div class="h-mid"><span id="pct-hd">0</span>% INDEXED · <span id="sorted-ct">0</span> SORTED</div>
+  <div class="h-right">
+    <div class="h-globe"></div>
+    <div class="h-btn" id="snd-btn">[ SND: ON ]</div>
+    <div id="gear-btn">⚙</div>
+  </div>
+</div>
 
-  <div class="page">
-    <div class="terminal">
+<div id="arc"><svg viewBox="0 0 1440 24" preserveAspectRatio="none" fill="none">
+  <path d="M0 24 Q720 -1 1440 24" stroke="rgba(82,224,238,.16)" stroke-width="1"/>
+</svg></div>
 
-      <!-- Header box -->
-      <div class="header-box">
-        <div class="header-sys">UNIFIED OPERATING SYSTEM // PERSONAL TERMINAL v2.6</div>
-        <div class="header-name">THEHILLBEYONDTHISONE</div>
-        <div class="header-copy">COPYRIGHT 2026 // AUTHORIZED ACCESS ONLY</div>
+<div id="field">
+  <canvas id="fc"></canvas>
+  <!-- repo nodes rendered over canvas -->
+</div>
+
+<div id="bins"></div>
+<div id="hexbar"><span id="hex2">0x15DB4A : 0x0AEAFC</span><span id="hex-keys" style="margin-left:32px;color:var(--ph3);letter-spacing:.18em;font-size:7.5px;opacity:.7">[ KEYS: 1–5 ENTRIES · ESC DISMISS ]</span></div>
+
+<!-- SETTINGS -->
+<div id="settings">
+  <div class="set-head">SYSTEM CONFIGURATION</div>
+  <div class="set-body">
+    <div class="set-section">
+      <div class="set-lbl">DISPLAY · REPOSITORIES</div>
+      <div id="repo-toggles"></div>
+      <div class="trow" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--ph3)">
+        <span class="trow-lbl">NODE REACTIVE</span>
+        <div class="tog" id="tog-nodereact"></div>
       </div>
-
-      <!-- Boot sequence -->
-      <div class="block" id="boot-block">
-        <div class="prompt">BOOT SEQUENCE INITIATED...</div>
-        <div class="output" id="boot-output"></div>
+    </div>
+    <div class="set-section">
+      <div class="set-lbl">FIELD PARAMETERS</div>
+      <div class="srow">
+        <span class="srow-lbl">NUMBER DENSITY</span>
+        <input type="range" id="sl-density" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-density">50</span>
       </div>
-
-      <!-- whoami -->
-      <div class="block" id="whoami-block" style="opacity:0">
-        <div class="prompt">whoami</div>
-        <div class="output">
-          <div class="whoami-name">thehillbeyondthisone</div>
-          <div class="whoami-status">STATUS &nbsp;: &nbsp;🌴 on vacation</div>
-        </div>
+      <div class="srow">
+        <span class="srow-lbl">DIGIT SPEED</span>
+        <input type="range" id="sl-rate" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-rate">50</span>
       </div>
-
-      <!-- ls projects -->
-      <div class="block" id="projects-block" style="opacity:0">
-        <div class="prompt">ls --projects</div>
-        <div class="output">
-          <div class="project-row">
-            <span class="perm">drwxr-xr-x</span>
-            <a class="pname" href="https://github.com/thehillbeyondthisone/RubiKit" target="_blank" rel="noopener">RubiKit</a>
-            <span class="plang">C#</span>
-            <span class="pstars">★★★★☆</span>
-            <a class="popen" href="https://github.com/thehillbeyondthisone/RubiKit" target="_blank" rel="noopener">[OPEN]</a>
-          </div>
-          <div class="pdesc">Os-style modular framework for AOSharp. Built for extensibility.</div>
-          <div class="project-row" style="margin-top:0.5rem;">
-            <span class="perm">drwxr-xr-x</span>
-            <a class="pname" href="https://github.com/thehillbeyondthisone/WhatIfWe" target="_blank" rel="noopener">WhatIfWe</a>
-            <span class="plang"></span>
-            <span class="pstars"></span>
-            <a class="popen" href="https://github.com/thehillbeyondthisone/WhatIfWe" target="_blank" rel="noopener">[OPEN]</a>
-          </div>
-          <div class="pdesc">A space for questions, experiments, and what comes after.</div>
-        </div>
+      <div class="srow">
+        <span class="srow-lbl">SHIMMER FREQ</span>
+        <input type="range" id="sl-shim" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-shim">50</span>
       </div>
-
-      <!-- contact -->
-      <div class="block" id="contact-block" style="opacity:0">
-        <div class="prompt">cat contact.cfg</div>
-        <div class="output">
-          <div class="contact-row">
-            <span class="ckey">GITHUB</span>
-            <a class="cval" href="https://github.com/thehillbeyondthisone" target="_blank" rel="noopener">github.com/thehillbeyondthisone</a>
-          </div>
-          <div class="contact-row">
-            <span class="ckey">EMAIL</span>
-            <a class="cval" href="mailto:thehillbeyondthisone@gmail.com">thehillbeyondthisone@gmail.com</a>
-          </div>
-          <div class="contact-row">
-            <span class="ckey">DISCORD</span>
-            <span class="cval">YellowUmbrellaGroup#8756</span>
-          </div>
-        </div>
+    </div>
+    <div class="set-section">
+      <div class="set-lbl">Z-BLOOM</div>
+      <div class="srow">
+        <span class="srow-lbl">BLOOM COUNT</span>
+        <input type="range" id="sl-bcount" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-bcount">50</span>
       </div>
-
-      <!-- Idle prompt -->
-      <div id="idle-prompt" style="opacity:0">
-        <span style="color:var(--amber);">&gt; </span><span class="blink-cursor"></span>
+      <div class="srow">
+        <span class="srow-lbl">BLOOM SPEED</span>
+        <input type="range" id="sl-bspeed" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-bspeed">50</span>
       </div>
-
+      <div class="srow">
+        <span class="srow-lbl">BLOOM SIZE</span>
+        <input type="range" id="sl-bsize" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-bsize">50</span>
+      </div>
+    </div>
+    <div class="set-section">
+      <div class="set-lbl">WARP FIELD</div>
+      <div class="srow">
+        <span class="srow-lbl">JELLINESS</span>
+        <input type="range" id="sl-jelly" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-jelly">50</span>
+      </div>
+      <div class="srow">
+        <span class="srow-lbl">WARP RADIUS</span>
+        <input type="range" id="sl-wr" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-wr">50</span>
+      </div>
+      <div class="srow">
+        <span class="srow-lbl">WARP STRENGTH</span>
+        <input type="range" id="sl-ws" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-ws">50</span>
+      </div>
+      <div class="srow">
+        <span class="srow-lbl">WARP SCALE</span>
+        <input type="range" id="sl-wsc" min="0" max="100" value="50">
+        <span class="srow-val" id="vl-wsc">50</span>
+      </div>
     </div>
   </div>
+</div>
 
-  <script>
-  // ═══════════════════════════════════════════
-  //  CURSOR
-  // ═══════════════════════════════════════════
-  const cursorEl = document.getElementById('cursor');
-  let mx = -999, my = -999;
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursorEl.style.left = mx + 'px';
-    cursorEl.style.top  = my + 'px';
+<!-- INSPECTOR -->
+<div id="inspector">
+  <div class="ins-head">
+    <div><div class="ins-title" id="ins-title">—</div><div class="ins-sub" id="ins-sub">REPOSITORY ENTRY</div></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <div class="ins-nav" id="ins-prev">◀</div>
+      <div class="ins-nav" id="ins-next">▶</div>
+      <div class="ins-close" id="ins-close">×</div>
+    </div>
+  </div>
+  <div class="ins-body">
+    <div class="ins-sec"><div class="ins-sec-lbl">DESCRIPTION</div><p class="ins-desc" id="ins-desc">—</p></div>
+    <div class="ins-sec">
+      <div class="ins-sec-lbl">SORT PROGRESS</div>
+      <div class="ins-prog-track"><div class="ins-prog-fill" id="ins-prog" style="width:0%"></div></div>
+      <div class="ins-kv" style="margin-top:4px"><span class="ins-k">COMPLETION</span><span class="ins-v" id="ins-pct-v">0%</span></div>
+    </div>
+    <div class="ins-sec">
+      <div class="ins-sec-lbl">METADATA</div>
+      <div class="ins-kv"><span class="ins-k">LANGUAGE</span><span class="ins-v" id="ins-lang">—</span></div>
+      <div class="ins-kv"><span class="ins-k">POPULARITY</span><span class="ins-v" id="ins-pop">—</span></div>
+      <div class="ins-kv"><span class="ins-k">STATUS</span><span class="ins-v" id="ins-status">ACTIVE</span></div>
+    </div>
+    <div class="ins-sec"><div class="ins-sec-lbl">TAGS</div><div class="ins-tags" id="ins-tags"></div></div>
+    <div class="ins-sec"><a class="ins-link" id="ins-link" href="#" target="_blank">ACCESS REPOSITORY →</a></div>
+  </div>
+</div>
+
+<div id="boot">
+  <div class="boot-line" id="bl-0">THEHILLBEYONDTHISONE · TERMINAL v2.1</div>
+  <div class="boot-line" id="bl-1">INITIALIZING FIELD MATRIX . . .</div>
+  <div class="boot-line" id="bl-2">LOADING REPOSITORY INDEX . . .</div>
+  <div class="boot-line" id="bl-3">ESTABLISHING SORT CHANNELS . . .</div>
+  <div class="boot-line" id="bl-4">CALIBRATING WARP FIELD . . .</div>
+  <div class="boot-line" id="bl-5">SYSTEM READY<span id="boot-cursor"></span></div>
+</div>
+
+<script>
+// ─── REPOS ─────────────────────────────────────────
+const REPOS = [
+  {id:0,num:'01',name:'RubiKit',       short:'RUBIKIT', lang:'C#',        pop:'★★★★☆',stars:4,nodeSize:78,status:'ACTIVE',
+   desc:'Modular plugin framework for AOSharp — an OS-style foundation for structured, composable game extensions. HTTP and SSE transport built-in.',
+   tags:['FRAMEWORK','C#','HTTP','SSE','AOSHARP'],url:'https://github.com/thehillbeyondthisone/RubiKit',pct:9,visible:true},
+  {id:1,num:'02',name:'NotumHUD',       short:'NOTUMHUD',lang:'C# / JS',   pop:'★★★☆☆',stars:3,nodeSize:62,status:'ACTIVE',
+   desc:'Real-time character stats overlay for Anarchy Online. Live HUD rendering health, nano, XP, cooldowns via AOSharp.',
+   tags:['C#','JAVASCRIPT','AOSHARP','REAL-TIME'],url:'https://github.com/thehillbeyondthisone/NotumHUD',pct:30,visible:true},
+  {id:2,num:'03',name:'Xanalytics',     short:'XANALY',  lang:'JAVASCRIPT',pop:'★★☆☆☆',stars:2,nodeSize:52,status:'ACTIVE',
+   desc:'Live loot and XP analytics via log tailing. Raw game data surfaced as structured, actionable insight in real time.',
+   tags:['ANALYTICS','LOG PARSING','REAL-TIME','XP'],url:'https://github.com/thehillbeyondthisone/Xanalytics',pct:33,visible:true},
+  {id:3,num:'04',name:'Hydra',          short:'HYDRA',   lang:'JAVASCRIPT',pop:'★★☆☆☆',stars:2,nodeSize:52,status:'ACTIVE',
+   desc:'Many-headed sensor observer. Unifies disparate data feeds into one surface — multiple inputs monitored, correlated, reconciled.',
+   tags:['SENSORS','AGGREGATION','MONITORING','IoT'],url:'https://github.com/thehillbeyondthisone/Hydra',pct:18,visible:true},
+  {id:4,num:'05',name:'NH_Standalone',  short:'NH·SA',   lang:'C# / JS',   pop:'★☆☆☆☆',stars:1,nodeSize:42,status:'ACTIVE',
+   desc:'Standalone NotumHUD — decoupled from the plugin stack for independent deployment without RubiKit.',
+   tags:['STANDALONE','HUD','OVERLAY'],url:'https://github.com/thehillbeyondthisone/NotumHUD_standalone',pct:11,visible:true},
+];
+
+// ─── SETTINGS STATE ────────────────────────────────
+// All slider transforms are calibrated so slider=50 → these values.
+const S = {
+  density:    120,    // lerp(10,230, 0.5)=120
+  digitRate: 1660,    // lerp(3300,20, 0.5)=1660
+  shimRate:  2460,    // lerp(4900,20, 0.5)=2460
+  warpR:      75,     // 50/100*150=75
+  warpStr:   0.11,    // 50/100*0.22=0.11
+  warpScale: 0.04,    // 50/100*0.08=0.04
+  jelly:     0.10,    // 50/100*0.20=0.10
+  bloomCount:  3,     // round(lerp(0,6, 0.5))=3
+  bloomSpeed:0.00045, // lerp(0.00005,0.00085, 0.5)=0.00045
+  bloomMaxSz:  46,    // lerp(10,82, 0.5)=46
+  nodeReactive: false,
+};
+
+// ─── UTILS ─────────────────────────────────────────
+const rng  = (a,b) => Math.random()*(b-a)+a;
+const ri   = (a,b) => Math.floor(rng(a,b+1));
+const lerp = (a,b,t) => a+(b-a)*t;
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+
+// ─── SOUND ─────────────────────────────────────────
+let sndOn=true, actx=null;
+function ensureCtx(){
+  if(!actx){ actx=new(window.AudioContext||window.webkitAudioContext)(); }
+}
+function beep(freq=440,dur=.07,vol=.08,type='sine'){
+  if(!sndOn)return; ensureCtx(); if(!actx)return;
+  const o=actx.createOscillator(),g=actx.createGain();
+  o.connect(g);g.connect(actx.destination);
+  o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(vol,actx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
+  o.start();o.stop(actx.currentTime+dur);
+}
+document.getElementById('snd-btn').textContent='[ SND: ON ]';
+document.getElementById('snd-btn').addEventListener('click',()=>{
+  sndOn=!sndOn;
+  document.getElementById('snd-btn').textContent=`[ SND: ${sndOn?'ON':'OFF'} ]`;
+  ensureCtx();
+  if(sndOn) beep(880,.05,.06);
+});
+
+// ─── SETTINGS: hidden, opened by clicking 2→7→5 in field ──
+const settingsEl = document.getElementById('settings');
+let settingsOpen = false;
+let _seqBuf = [];   // tracks last 3 clicked digits
+
+function openSettings(){
+  settingsOpen=true;
+  settingsEl.classList.add('open');
+  document.getElementById('gear-btn').classList.add('active');
+  if(inspectorOpen) closeInspector();
+}
+function closeSettings(){
+  settingsOpen=false;
+  settingsEl.classList.remove('open');
+  document.getElementById('gear-btn').classList.remove('active');
+}
+document.getElementById('gear-btn').addEventListener('click',()=>{
+  settingsOpen ? closeSettings() : openSettings();
+});
+document.addEventListener('click',e=>{
+  if(settingsOpen && !settingsEl.contains(e.target) && e.target.id!=='gear-btn'){
+    closeSettings();
+  }
+});
+
+// Repo toggles
+const togWrap = document.getElementById('repo-toggles');
+REPOS.forEach(r=>{
+  const row=document.createElement('div'); row.className='trow';
+  const tog=document.createElement('div'); tog.className='tog on'; tog.dataset.id=r.id;
+  const lbl=document.createElement('span'); lbl.className='trow-lbl'; lbl.textContent=r.short;
+  tog.addEventListener('click',()=>{
+    r.visible=!r.visible;
+    tog.classList.toggle('on',r.visible);
+    const el=document.querySelector(`.rnode[data-id="${r.id}"]`);
+    if(el) el.style.display=r.visible?'flex':'none';
   });
+  row.appendChild(lbl); row.appendChild(tog); togWrap.appendChild(row);
+});
 
-  // ═══════════════════════════════════════════
-  //  AUDIO  (Web Audio API — no external files)
-  // ═══════════════════════════════════════════
-  let audioOn = false;
-  let audioCtx = null;
-
-  function getCtx() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    return audioCtx;
+// Node reactive toggle
+const togNR = document.getElementById('tog-nodereact');
+togNR.addEventListener('click',()=>{
+  S.nodeReactive = !S.nodeReactive;
+  togNR.classList.toggle('on', S.nodeReactive);
+  saveSettings();
+  if(!S.nodeReactive){
+    // clear any applied transform so nodes snap back to float position
+    document.querySelectorAll('.rnode').forEach(e=>e.style.transform='');
   }
+});
 
-  // Short mechanical click
-  function playClick(vol = 0.18) {
-    if (!audioOn) return;
-    const ac = getCtx();
-    const buf = ac.createBuffer(1, ac.sampleRate * 0.04, ac.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) {
-      d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ac.sampleRate * 0.008));
-    }
-    const src = ac.createBufferSource();
-    src.buffer = buf;
-    const g = ac.createGain(); g.gain.value = vol;
-    // slight pitch filter
-    const f = ac.createBiquadFilter();
-    f.type = 'bandpass'; f.frequency.value = 2200; f.Q.value = 0.8;
-    src.connect(f); f.connect(g); g.connect(ac.destination);
-    src.start();
-  }
-
-  // Disk whirr — short rising tone burst
-  function playWhirr() {
-    if (!audioOn) return;
-    const ac = getCtx();
-    const osc = ac.createOscillator();
-    const g   = ac.createGain();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(60, ac.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(220, ac.currentTime + 0.18);
-    osc.frequency.exponentialRampToValueAtTime(80, ac.currentTime + 0.38);
-    g.gain.setValueAtTime(0.04, ac.currentTime);
-    g.gain.linearRampToValueAtTime(0.08, ac.currentTime + 0.12);
-    g.gain.linearRampToValueAtTime(0, ac.currentTime + 0.38);
-    osc.connect(g); g.connect(ac.destination);
-    osc.start(); osc.stop(ac.currentTime + 0.4);
-  }
-
-  // Typewriter tick
-  function playTick() {
-    if (!audioOn) return;
-    const ac = getCtx();
-    const buf = ac.createBuffer(1, ac.sampleRate * 0.015, ac.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) {
-      d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ac.sampleRate * 0.003));
-    }
-    const src = ac.createBufferSource(); src.buffer = buf;
-    const g = ac.createGain(); g.gain.value = 0.09;
-    src.connect(g); g.connect(ac.destination);
-    src.start();
-  }
-
-  const audioBtn = document.getElementById('audio-btn');
-  audioBtn.addEventListener('click', () => {
-    audioOn = !audioOn;
-    audioBtn.textContent = audioOn ? '[ SND: ON  ]' : '[ SND: OFF ]';
-    audioBtn.classList.toggle('on', audioOn);
-    if (audioOn) { getCtx(); playWhirr(); }
+// ─── LOCALSTORAGE ──────────────────────────────────
+const LS_KEY = 'thbo_settings';
+function saveSettings(){
+  const vals={};
+  ['sl-density','sl-rate','sl-shim','sl-jelly','sl-wr','sl-ws','sl-wsc','sl-bcount','sl-bspeed','sl-bsize'].forEach(id=>{
+    const el=document.getElementById(id); if(el) vals[id]=el.value;
   });
+  vals['nodeReactive']=S.nodeReactive;
+  try{localStorage.setItem(LS_KEY,JSON.stringify(vals));}catch(e){}
+}
+function loadSettings(){
+  try{
+    const raw=localStorage.getItem(LS_KEY); if(!raw) return;
+    const vals=JSON.parse(raw);
+    Object.entries(vals).forEach(([k,v])=>{
+      if(k==='nodeReactive') return;
+      const el=document.getElementById(k); if(el) el.value=v;
+    });
+    if(vals.nodeReactive){S.nodeReactive=true;document.getElementById('tog-nodereact').classList.add('on');}
+  }catch(e){}
+}
+loadSettings();
 
-  // Play sounds on interactive hover
-  document.querySelectorAll('a, .popen, .audio-btn').forEach(el => {
-    el.addEventListener('mouseenter', () => playClick(0.12));
-    el.addEventListener('click',      () => { playClick(0.22); playWhirr(); });
-  });
+// Sliders — 0=off/min, 100=max.
+function bindSlider(id, valId, fn) {
+  const sl = document.getElementById(id);
+  const vl = document.getElementById(valId);
+  const update = (isInit) => { vl.textContent = sl.value; fn(parseFloat(sl.value), isInit); };
+  sl.addEventListener('input', () => { update(false); saveSettings(); });
+  update(true);
+}
+bindSlider('sl-density','vl-density', (v,init)=>{ S.density    = Math.round(lerp(10, 230, v/100)); if(!init) rebuildNums(); });
+bindSlider('sl-rate',   'vl-rate',    (v)     =>{ S.digitRate  = lerp(3300, 20,    v/100); });
+bindSlider('sl-shim',   'vl-shim',   (v)     =>{ S.shimRate   = lerp(4900, 20,    v/100); });
+bindSlider('sl-jelly',  'vl-jelly',  (v)     =>{ S.jelly      = v/100 * 0.20; });
+bindSlider('sl-wr',     'vl-wr',     (v)     =>{ S.warpR      = v/100 * 150; });
+bindSlider('sl-ws',     'vl-ws',     (v)     =>{ S.warpStr    = v/100 * 0.22; });
+bindSlider('sl-wsc',    'vl-wsc',    (v)     =>{ S.warpScale  = v/100 * 0.08; });
+bindSlider('sl-bcount', 'vl-bcount', (v,init)=>{ S.bloomCount = Math.round(lerp(0, 6, v/100)); if(!init) rebuildBloom(); });
+bindSlider('sl-bspeed', 'vl-bspeed', (v)     =>{ S.bloomSpeed = lerp(0.00005, 0.00085, v/100); });
+bindSlider('sl-bsize',  'vl-bsize',  (v)     =>{ S.bloomMaxSz = lerp(10, 82, v/100); });
 
-  // ═══════════════════════════════════════════
-  //  BOOT SEQUENCE
-  // ═══════════════════════════════════════════
-  const bootLines = [
-    'Checking memory banks',
-    'Loading user profile',
-    'Mounting filesystem',
-  ];
+// ─── BINS ──────────────────────────────────────────
+const binsEl=document.getElementById('bins');
+const binEls=[];
+let sortedCount=0;
 
-  async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+REPOS.forEach(r=>{
+  const d=document.createElement('div');
+  d.className='bin'; d.dataset.id=r.id;
+  d.innerHTML=`<div class="bin-no">${r.num}</div>
+    <div class="bin-nm">${r.short}</div>
+    <div class="bin-track"><div class="bin-fill" id="bf-${r.id}" style="width:${r.pct}%"></div></div>
+    <div class="bin-pct" id="bpct-${r.id}">${r.pct}%</div>`;
+  d.addEventListener('click',()=>openInspector(r.id));
+  binsEl.appendChild(d); binEls.push(d);
+});
 
-  async function typeText(el, text, delay = 28) {
-    for (const ch of text) {
-      el.textContent += ch;
-      playTick();
-      await sleep(delay + Math.random() * 20);
-    }
-  }
+function setBinPct(id,pct){
+  REPOS[id].pct=clamp(pct,0,100);
+  document.getElementById('bf-'+id).style.width=REPOS[id].pct+'%';
+  document.getElementById('bpct-'+id).textContent=Math.round(REPOS[id].pct)+'%';
+  updateGlobal();
+}
+function updateGlobal(){
+  document.getElementById('pct-hd').textContent=Math.round(REPOS.reduce((s,r)=>s+r.pct,0)/REPOS.length);
+  document.getElementById('sorted-ct').textContent=sortedCount;
+}
+updateGlobal();
+setInterval(()=>{
+  const inc=REPOS.filter(r=>r.pct<100);
+  if(inc.length){const r=inc[ri(0,inc.length-1)];setBinPct(r.id,r.pct+rng(.06,.22));}
+},2800);
 
-  async function runBoot() {
-    const out = document.getElementById('boot-output');
-    await sleep(300);
-    playWhirr();
+// ─── INSPECTOR ─────────────────────────────────────
+const inspector=document.getElementById('inspector');
+let inspectorOpen=false, activeNode=null;
+document.getElementById('ins-close').addEventListener('click',closeInspector);
 
-    for (const line of bootLines) {
-      const row = document.createElement('div');
-      row.className = 'boot-line';
-      row.style.opacity = '1';
-      out.appendChild(row);
+function openInspector(id){
+  if(settingsOpen){settingsOpen=false;settingsEl.classList.remove('open');document.getElementById('gear-btn')?.classList.remove('active');}
+  const r=REPOS[id];
+  document.getElementById('ins-title').textContent=r.name;
+  document.getElementById('ins-sub').textContent='REPOSITORY · ENTRY '+r.num;
+  document.getElementById('ins-desc').textContent=r.desc;
+  document.getElementById('ins-lang').textContent=r.lang;
+  document.getElementById('ins-pop').textContent=r.pop;
+  const statusEl=document.getElementById('ins-status');
+  statusEl.textContent=r.pct>=100?'COMPLETE':r.status||'ACTIVE';
+  statusEl.style.color=r.pct>=100?'rgba(82,224,238,.5)':'';
+  document.getElementById('ins-link').href=r.url;
+  document.getElementById('ins-tags').innerHTML=r.tags.map(t=>`<span class="ins-tag">${t}</span>`).join('');
+  document.getElementById('ins-prog').style.width='0%';
+  document.getElementById('ins-pct-v').textContent=Math.round(r.pct)+'%';
+  inspector.classList.add('open'); inspectorOpen=true; activeNode=id;
+  setTimeout(()=>{ document.getElementById('ins-prog').style.width=r.pct+'%'; },80);
+  beep(660,.1,.07);
+}
+function closeInspector(){inspector.classList.remove('open');inspectorOpen=false;activeNode=null;}
 
-      const dots = '............';
-      await typeText(row, line, 22);
-      const dotsSpan = document.createElement('span');
-      dotsSpan.className = 'boot-dots';
-      row.appendChild(dotsSpan);
-      await typeText(dotsSpan, dots, 18);
-      const ok = document.createElement('span');
-      ok.className = 'boot-ok';
-      ok.textContent = 'OK';
-      row.appendChild(ok);
-      playClick(0.25);
-      await sleep(180);
-    }
+document.getElementById('ins-prev').addEventListener('click',()=>{
+  if(activeNode===null)return;
+  openInspector((activeNode-1+REPOS.length)%REPOS.length);
+});
+document.getElementById('ins-next').addEventListener('click',()=>{
+  if(activeNode===null)return;
+  openInspector((activeNode+1)%REPOS.length);
+});
 
-    await sleep(320);
-    playWhirr();
+// ─── CANVAS NUMBER FIELD ────────────────────────────
+const canvas = document.getElementById('fc');
+const ctx    = canvas.getContext('2d');
+const field  = document.getElementById('field');
 
-    // Reveal sections
-    for (const id of ['whoami-block','projects-block','contact-block','idle-prompt']) {
-      await sleep(220);
-      const el = document.getElementById(id);
-      el.style.transition = 'opacity 0.3s ease';
-      el.style.opacity = '1';
-      playClick(0.15);
-    }
-  }
+let W=0, H=0;
+let mx=-9999, my=-9999;
 
-  // ═══════════════════════════════════════════
-  //  TETHERED CHARACTER GRID
-  // ═══════════════════════════════════════════
-  const canvas = document.getElementById('char-grid');
-  const ctx    = canvas.getContext('2d');
+function resize(){
+  W=field.clientWidth; H=field.clientHeight;
+  canvas.width=W; canvas.height=H;
+}
+resize();
+window.addEventListener('resize',()=>{clearTimeout(window._rto);window._rto=setTimeout(()=>{resize();rebuildNums();placeNodes();},180);});
 
-  const CHARS = '01アイウエオカキクケコ#$%&*<>[]{}\\|/░▒▓─│┼┐└┘┌ ABCDEFGHIJKLMNOPQRSTXYZabcdefgh';
-  const COLS_SPACING = 28; // px between chars
-  const ROWS_SPACING = 22;
-  const INFLUENCE = 130;   // mouse radius
-  const SPRING    = 0.06;  // spring back force
-  const DAMPING   = 0.78;
+field.addEventListener('mousemove',e=>{
+  const r=field.getBoundingClientRect();
+  mx=e.clientX-r.left; my=e.clientY-r.top;
+});
+field.addEventListener('mouseleave',()=>{mx=-9999;my=-9999;});
+field.addEventListener('touchmove',e=>{
+  const t=e.touches[0];
+  const r=field.getBoundingClientRect();
+  mx=t.clientX-r.left; my=t.clientY-r.top;
+},{passive:true});
+field.addEventListener('touchend',()=>{mx=-9999;my=-9999;},{passive:true});
 
-  let W, H, cols, rows, cells = [];
+// ─── NUMBER OBJECTS ────────────────────────────────
+// Each num has a HOME position (hx,hy) — warp displaces it from home.
+const TIERS=[
+  {sz:9, wt:.48,opR:[.13,.26]},
+  {sz:13,wt:.27,opR:[.26,.46]},
+  {sz:18,wt:.14,opR:[.40,.60]},
+  {sz:26,wt:.07,opR:[.55,.72]},
+  {sz:38,wt:.04,opR:[.65,.82]},
+];
+function pickTier(){let r=Math.random(),a=0;for(const t of TIERS){a+=t.wt;if(r<a)return t;}return TIERS[0];}
 
-  class Cell {
-    constructor(col, row) {
-      this.homeX = col * COLS_SPACING + COLS_SPACING / 2;
-      this.homeY = row * ROWS_SPACING + ROWS_SPACING / 2;
-      this.x  = this.homeX;
-      this.y  = this.homeY;
-      this.vx = 0; this.vy = 0;
-      this.char     = randomChar();
-      this.baseAlpha = 0.04 + Math.random() * 0.06;
-      this.alpha    = this.baseAlpha;
-      this.nextFlip = Date.now() + 2000 + Math.random() * 6000;
-    }
-    update(now) {
-      // Spring back to home
-      const ax = (this.homeX - this.x) * SPRING;
-      const ay = (this.homeY - this.y) * SPRING;
+let nums=[];
 
-      // Mouse repulsion
-      const dx = this.x - mx;
-      const dy = this.y - my;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < INFLUENCE && dist > 0) {
-        const f = ((INFLUENCE - dist) / INFLUENCE) ** 2 * 2.2;
-        this.vx += (dx / dist) * f;
-        this.vy += (dy / dist) * f;
-        // Brighten when near cursor
-        this.alpha = Math.min(0.55, this.baseAlpha + f * 0.22);
-        // Randomly flip char when disturbed
-        if (Math.random() < 0.04) this.char = randomChar();
-      } else {
-        this.alpha += (this.baseAlpha - this.alpha) * 0.08;
+function mkNum(){
+  const tier=pickTier();
+  const baseOp=rng(...tier.opR);
+  const hx=rng(12,W-24);
+  const hy=rng(12,H-24);
+  return {
+    hx,hy,
+    dx:0,dy:0,       // current spring displacement
+    vx:0,vy:0,       // spring velocity
+    scDisp:0,scV:0,  // scale spring
+    sz:tier.sz,
+    baseOp,curOp:baseOp,
+    digit:ri(0,9),
+    driftX:rng(-.28,.28),
+    driftY:rng(-.18,.18),
+    dead:false
+  };
+}
+
+function rebuildNums(){
+  nums=[];
+  for(let i=0;i<S.density;i++) nums.push(mkNum());
+}
+rebuildNums();
+
+// click on canvas — hit-test nums + detect 2→7→5 sequence
+const SEQ=[2,7,5]; let seqBuf=[];
+let settingsUnlocked=false;
+const SEQ_PITCHES=[440,660,880];
+
+field.addEventListener('click',e=>{
+  const fr=field.getBoundingClientRect();
+  const cx=e.clientX-fr.left, cy=e.clientY-fr.top;
+  // find topmost (last drawn) number under click
+  for(let i=nums.length-1;i>=0;i--){
+    const n=nums[i];
+    if(n.dead)continue;
+    const rx=n.hx+n.dx, ry=n.hy+n.dy;
+    if(cx>=rx-2&&cx<=rx+n.sz+2&&cy>=ry-n.sz&&cy<=ry+4){
+
+      if(!settingsUnlocked){
+        // advance buffer: only keep digits that extend the sequence
+        const nextExpected=SEQ[seqBuf.length];
+        if(n.digit===nextExpected){
+          seqBuf.push(n.digit);
+          beep(SEQ_PITCHES[seqBuf.length-1],.08,.05,'sine');
+          if(seqBuf.length===SEQ.length){
+            settingsUnlocked=true;
+            seqBuf=[];
+            const gb=document.getElementById('gear-btn');
+            gb.classList.add('unlocked');
+            // brief flash to draw attention
+            gb.classList.add('active');
+            setTimeout(()=>gb.classList.remove('active'),600);
+            beep(880,.18,.09,'sine');
+          }
+        } else if(n.digit===SEQ[0]){
+          // wrong digit but it's the start — restart from 1
+          seqBuf=[n.digit];
+          beep(SEQ_PITCHES[0],.08,.05,'sine');
+        } else {
+          seqBuf=[];
+        }
       }
 
-      this.vx = (this.vx + ax) * DAMPING;
-      this.vy = (this.vy + ay) * DAMPING;
-      this.x += this.vx;
-      this.y += this.vy;
+      sortNum(n,e.clientX,e.clientY);
+      return;
+    }
+  }
+});
 
-      // Idle char flip
-      if (now > this.nextFlip) {
-        this.char = randomChar();
-        this.nextFlip = now + 1500 + Math.random() * 5000;
+// ─── SORT ──────────────────────────────────────────
+function sortNum(n,cx,cy){
+  n.dead=true;
+  const b=document.createElement('div');
+  b.className='burst';b.style.cssText=`left:${cx}px;top:${cy}px`;
+  document.body.appendChild(b);setTimeout(()=>b.remove(),420);
+
+  const inc=REPOS.filter(r=>r.pct<100);
+  const target=inc.length?inc.reduce((a,b)=>b.pct<a.pct?b:a,inc[0]):REPOS[ri(0,REPOS.length-1)];
+  const bEl=binEls[target.id];
+  const br=bEl.getBoundingClientRect();
+  const tx=br.left+br.width/2, ty=br.top+br.height/2;
+
+  // trail
+  for(let i=1;i<=9;i++){
+    setTimeout(()=>{
+      const t=document.createElement('div');t.className='trail';
+      t.style.cssText=`left:${cx+(tx-cx)*(i/9)}px;top:${cy+(ty-cy)*(i/9)}px;animation-delay:${i*.018}s`;
+      document.body.appendChild(t);setTimeout(()=>t.remove(),520);
+    },i*24);
+  }
+
+  beep(ri(600,1100),.09,.07,'sine');
+  setTimeout(()=>{
+    setBinPct(target.id,target.pct+rng(2,5.5));
+    sortedCount++;
+    binEls[target.id].classList.add('lit');
+    setTimeout(()=>binEls[target.id].classList.remove('lit'),320);
+    beep(ri(280,480),.12,.06,'square');
+    if(activeNode===target.id){
+      document.getElementById('ins-prog').style.width=REPOS[target.id].pct+'%';
+      document.getElementById('ins-pct-v').textContent=Math.round(REPOS[target.id].pct)+'%';
+    }
+    updateGlobal();
+  },300);
+
+  setTimeout(()=>{
+    const idx=nums.indexOf(n);
+    if(idx>-1)nums.splice(idx,1);
+    nums.push(mkNum());
+  },480);
+}
+
+// ─── WARP FUNCTION ─────────────────────────────────
+// Convex lens: displaces numbers AWAY from cursor center,
+// with a smooth fall-off. Near cursor = big outward push + scale up.
+function warp(hx, hy){
+  const dx = hx - mx;
+  const dy = hy - my;
+  const dist = Math.sqrt(dx*dx+dy*dy) || 0.001;
+  const R = S.warpR;
+  if(dist >= R) return {ox:0, oy:0, sc:1, op:0};
+  // falloff: smooth convex lens profile  t=1 at center, 0 at edge
+  const t = 1 - dist/R;
+  const tSmooth = t*t*(3-2*t);   // smoothstep
+
+  const maxPush = R * S.warpStr;
+  const push = tSmooth * maxPush;
+  const nx = (dx/dist)*push;
+  const ny = (dy/dist)*push;
+
+  const sc = 1 + tSmooth * S.warpScale * 2.2;
+  const opBoost = tSmooth * .6;
+  return {ox:nx, oy:ny, sc, opBoost};
+}
+
+// ─── RENDER LOOP ───────────────────────────────────
+let lastShim=0, lastDigit=0;
+
+function frame(ts){
+  requestAnimationFrame(frame);
+
+  // periodic shimmer
+  if(ts-lastShim > S.shimRate){
+    lastShim=ts;
+    for(let i=0;i<4;i++){
+      const n=nums[ri(0,nums.length-1)];
+      if(n&&!n.dead){n.curOp=Math.min(.97,n.baseOp*2.6);setTimeout(()=>{if(!n.dead)n.curOp=n.baseOp;},260);}
+    }
+  }
+  // digit flip
+  if(ts-lastDigit > S.digitRate){
+    lastDigit=ts;
+    for(let i=0;i<6;i++){const n=nums[ri(0,nums.length-1)];if(n&&!n.dead)n.digit=ri(0,9);}
+  }
+
+  ctx.clearRect(0,0,W,H);
+  tickBlooms(ts);
+
+  // draw cursor lens glow (soft radial)
+  if(mx>0&&mx<W&&my>0&&my<H){
+    const R=S.warpR;
+    const grad=ctx.createRadialGradient(mx,my,R*.05,mx,my,R);
+    grad.addColorStop(0,'rgba(82,224,238,.045)');
+    grad.addColorStop(1,'rgba(82,224,238,0)');
+    ctx.fillStyle=grad;
+    ctx.beginPath();ctx.arc(mx,my,R,0,Math.PI*2);ctx.fill();
+  }
+
+  nums.forEach(n=>{
+    if(n.dead) return;
+
+    // drift home position
+    n.hx+=n.driftX*.14;
+    n.hy+=n.driftY*.10;
+    if(n.hx<8||n.hx>W-8){n.driftX*=-1;n.hx=clamp(n.hx,8,W-8);}
+    if(n.hy<8||n.hy>H-8){n.driftY*=-1;n.hy=clamp(n.hy,8,H-8);}
+
+    // --- spring physics toward warp target ---
+    // jelliness: 0 = snappy (high stiffness, high loss), 1 = wobbly (low stiffness, low loss)
+    const jelly     = S.jelly;
+    const stiffness = lerp(0.22, 0.055, jelly);
+    const damping   = lerp(0.60, 0.88,  jelly);
+
+    const {ox=0,oy=0,sc=1,opBoost=0}=warp(n.hx,n.hy);
+
+    // positional spring
+    const ax = (ox - n.dx) * stiffness;
+    const ay = (oy - n.dy) * stiffness;
+    n.vx = n.vx * damping + ax;
+    n.vy = n.vy * damping + ay;
+    n.dx += n.vx;
+    n.dy += n.vy;
+
+    // hard clamp: numbers can never stray more than maxDisp from home
+    const maxDisp = S.warpR * 0.38;
+    const dispLen = Math.sqrt(n.dx*n.dx + n.dy*n.dy);
+    if(dispLen > maxDisp){
+      const scale = maxDisp / dispLen;
+      n.dx *= scale; n.dy *= scale;
+      n.vx *= 0.2;   n.vy *= 0.2;   // shed most velocity at boundary
+    }
+
+    // scale spring
+    const scTarget = sc - 1;
+    const asc = (scTarget - n.scDisp) * stiffness;
+    n.scV    = n.scV * damping + asc;
+    n.scDisp = clamp(n.scDisp + n.scV, -0.05, S.warpScale * 1.4);
+    const finalSc = 1 + n.scDisp;
+
+    const wx = n.hx + n.dx;
+    const wy = n.hy + n.dy;
+    const op = clamp(n.curOp + opBoost, 0, 1);
+
+    ctx.save();
+    ctx.translate(wx, wy);
+    ctx.scale(finalSc, finalSc);
+    ctx.font=`${n.sz}px 'IBM Plex Mono'`;
+    ctx.textBaseline='bottom';
+
+    // glow — also slightly boosted by jelly overshoot energy
+    const energy   = Math.sqrt(n.vx*n.vx+n.vy*n.vy);
+    const glowBoost= clamp(energy*.018, 0, .35);
+    const glowAlpha= clamp(op*.7 + opBoost*.4 + glowBoost, 0, .95);
+    ctx.shadowColor=`rgba(82,224,238,${glowAlpha.toFixed(2)})`;
+    ctx.shadowBlur = n.sz*.8 + opBoost*n.sz*1.4 + energy*n.sz*.12;
+    ctx.fillStyle  =`rgba(82,224,238,${op.toFixed(3)})`;
+    ctx.fillText(n.digit,0,0);
+    ctx.restore();
+  });
+
+  // ── repo nodes: float + optional warp, all at 60fps ──
+  nodeObjs.forEach(no=>{
+    if(no.el.style.display==='none') return;
+    const {MARGIN,sz} = no;
+
+    // smooth drift of home position
+    no.hx += no.driftX * 0.10;
+    no.hy += no.driftY * 0.07;
+    if(no.hx<MARGIN||no.hx>W-sz-MARGIN){ no.driftX*=-1; no.hx=clamp(no.hx,MARGIN,W-sz-MARGIN); }
+    if(no.hy<MARGIN||no.hy>H-sz-MARGIN){ no.driftY*=-1; no.hy=clamp(no.hy,MARGIN,H-sz-MARGIN); }
+
+    let finalX=no.hx, finalY=no.hy, finalSc=1;
+
+    if(S.nodeReactive){
+      const {ox=0,oy=0,sc=1}=warp(no.hx+sz/2, no.hy+sz/2);
+      const stiff=lerp(0.18,0.04,S.jelly), damp=lerp(0.65,0.90,S.jelly);
+      const ax=(ox-no.dx)*stiff, ay=(oy-no.dy)*stiff;
+      no.vx=no.vx*damp+ax; no.vy=no.vy*damp+ay;
+      no.dx+=no.vx;         no.dy+=no.vy;
+      const md=S.warpR*0.32, dl=Math.sqrt(no.dx*no.dx+no.dy*no.dy);
+      if(dl>md){no.dx*=md/dl;no.dy*=md/dl;no.vx*=.15;no.vy*=.15;}
+      finalX+=no.dx; finalY+=no.dy; finalSc=sc;
+    } else {
+      // bleed back spring to zero when reactive is off
+      no.dx*=0.85; no.dy*=0.85; no.vx*=0.85; no.vy*=0.85;
+    }
+
+    // lerp render position for extra smoothness
+    no.nx = lerp(no.nx||finalX, finalX, 0.15);
+    no.ny = lerp(no.ny||finalY, finalY, 0.15);
+
+    no.el.style.left      = no.nx.toFixed(2)+'px';
+    no.el.style.top       = no.ny.toFixed(2)+'px';
+    no.el.style.transform = finalSc!==1 ? `scale(${finalSc.toFixed(4)})` : '';
+  });
+}
+requestAnimationFrame(frame);
+
+// ─── Z-BLOOM ───────────────────────────────────────
+const BAYER = [
+   0,  8,  2, 10,
+  12,  4, 14,  6,
+   3, 11,  1,  9,
+  15,  7, 13,  5
+];
+
+const offC = document.createElement('canvas');
+const offX = offC.getContext('2d');
+let blooms = [];
+
+function mkBloom() {
+  const margin = 60;
+  return { x:rng(margin,W-margin), y:rng(margin,H-margin), digit:ri(0,9), sz:rng(6,10), phase:'grow', dissolveP:0 };
+}
+
+function rebuildBloom() {
+  blooms = [];
+  for (let i=0; i<S.bloomCount; i++) { const b=mkBloom(); b.sz=rng(6,S.bloomMaxSz*.65); blooms.push(b); }
+}
+rebuildBloom();
+
+function drawBloom(b, dt) {
+  if (b.phase==='grow') {
+    b.sz += S.bloomSpeed * dt * S.bloomMaxSz;
+    if (b.sz >= S.bloomMaxSz) { b.sz=S.bloomMaxSz; b.phase='dissolve'; b.dissolveP=0; }
+  } else {
+    b.dissolveP += S.bloomSpeed * dt * 1.4;
+    if (b.dissolveP >= 1) { Object.assign(b, mkBloom()); return; }
+  }
+
+  const sz  = Math.round(b.sz);
+  const op  = b.phase==='grow' ? clamp(b.sz/(S.bloomMaxSz*0.4),0,0.72) : 0.72;
+  const pad = Math.ceil(sz*0.35);
+  const ow  = sz+pad*2, oh=sz+pad*2;
+
+  offC.width=ow; offC.height=oh;
+  offX.clearRect(0,0,ow,oh);
+  offX.font=`${sz}px 'IBM Plex Mono'`;
+  offX.textBaseline='alphabetic';
+  offX.shadowColor=`rgba(82,224,238,${(op*.9).toFixed(2)})`;
+  offX.shadowBlur=sz*1.1;
+  offX.fillStyle=`rgba(82,224,238,${op.toFixed(3)})`;
+  offX.fillText(b.digit, pad, sz+pad*.35);
+
+  // Bayer dither: zero alpha on glyph pixels only — no rectangles
+  if (b.phase==='dissolve' && b.dissolveP>0) {
+    const threshold = b.dissolveP*16;
+    const block     = Math.max(2, Math.round(sz/6));
+    const img       = offX.getImageData(0,0,ow,oh);
+    const d         = img.data;
+    for (let py=0; py<oh; py++) {
+      for (let px=0; px<ow; px++) {
+        const i=(py*ow+px)*4;
+        if (d[i+3]===0) continue;
+        if (BAYER[(Math.floor(py/block)%4)*4+(Math.floor(px/block)%4)] < threshold) d[i+3]=0;
       }
     }
+    offX.putImageData(img,0,0);
   }
 
-  function randomChar() {
-    return CHARS[Math.floor(Math.random() * CHARS.length)];
-  }
+  ctx.drawImage(offC, b.x-pad, b.y-sz-pad*.35);
+}
 
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    cols = Math.ceil(W / COLS_SPACING) + 1;
-    rows = Math.ceil(H / ROWS_SPACING) + 1;
-    cells = [];
-    for (let r = 0; r < rows; r++)
-      for (let c = 0; c < cols; c++)
-        cells.push(new Cell(c, r));
-  }
+let lastBloomTs=0;
+// bloom drawing called from main frame loop — no separate RAF
+function tickBlooms(ts){
+  const dt=Math.min(ts-lastBloomTs,80);
+  lastBloomTs=ts;
+  if(S.bloomCount===0) return;
+  blooms.forEach(b=>drawBloom(b,dt));
+}
+// ─── NODE OBJECTS (RAF-driven) ──────────────────────
+const nodeObjs = [];  // { el, r, hx, hy, nx, ny, driftX, driftY, vx, vy, dx, dy }
 
-  function drawGrid() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.font = '11px "Share Tech Mono", monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const now = Date.now();
-    for (const cell of cells) {
-      cell.update(now);
-      ctx.fillStyle = `rgba(212,137,42,${cell.alpha})`;
-      ctx.fillText(cell.char, cell.x, cell.y);
-    }
-    requestAnimationFrame(drawGrid);
-  }
+function placeNodes(){
+  document.querySelectorAll('.rnode').forEach(e=>e.remove());
+  nodeObjs.length = 0;
+  const MARGIN=20;
+  const cols=REPOS.length;
+  REPOS.forEach((r,i)=>{
+    const sz=r.nodeSize;
+    const sw=W/cols;
+    const cx=sw*i+rng(sw*.22,sw*.78);
+    const cy=rng(H*.12,H*.7);
+    const x=clamp(cx-sz/2,MARGIN,W-sz-MARGIN);
+    const y=clamp(cy-sz/2,MARGIN,H-sz-MARGIN);
 
-  resize();
-  drawGrid();
-  window.addEventListener('resize', resize);
+    const el=document.createElement('div');
+    el.className='rnode'; el.dataset.id=r.id;
+    el.style.cssText=`left:${x}px;top:${y}px;width:${sz}px;height:${sz}px;display:${r.visible?'flex':'none'};box-shadow:0 0 14px rgba(82,224,238,.12),0 0 2px rgba(82,224,238,.3)`;
+    const fs=Math.max(6,Math.round(sz*.115));
+    const nfs=Math.max(9,Math.round(sz*.155));
+    el.innerHTML=`
+      <div class="rnode-pulse"></div>
+      <div class="rnode-no" style="font-size:${fs}px">${r.num}</div>
+      <div class="rnode-nm" style="font-size:${nfs}px">${r.short}</div>`;
+    el.addEventListener('click',ev=>{ev.stopPropagation();openInspector(r.id);});
+    field.appendChild(el);
 
-  // ═══════════════════════════════════════════
-  //  START
-  // ═══════════════════════════════════════════
-  runBoot();
-  </script>
+    nodeObjs.push({
+      el, r, sz, MARGIN,
+      hx: x, hy: y,        // home (base float position)
+      nx: x, ny: y,        // current rendered position
+      driftX: rng(-.12,.12), driftY: rng(-.08,.08),
+      vx:0, vy:0,           // spring velocity (warp)
+      dx:0, dy:0,           // spring displacement (warp)
+    });
+  });
+}
+placeNodes();
+
+// ─── HEX ───────────────────────────────────────────
+function updateHex(){
+  const h=()=>Math.floor(Math.random()*0xFFFFFF).toString(16).toUpperCase().padStart(6,'0');
+  document.getElementById('hex2').textContent=`0x${h()} : 0x${h()}`;
+}
+setInterval(updateHex,3200);
+
+// ─── KEYBOARD ──────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  const n=parseInt(e.key);
+  if(n>=1&&n<=5)openInspector(n-1);
+  if(e.key==='Escape'){closeInspector();}
+});
+
+// ─── BOOT SEQUENCE ─────────────────────────────────
+(function boot(){
+  const bootEl=document.getElementById('boot');
+  // hide the real UI until boot completes
+  const hideIds=['hbar','arc','field','bins','hexbar'];
+  hideIds.forEach(id=>{const e=document.getElementById(id);if(e){e.style.opacity='0';e.style.transition='opacity .6s ease';}});
+
+  const lines=document.querySelectorAll('.boot-line');
+  const delays=[0, 320, 600, 860, 1100, 1380];
+  lines.forEach((l,i)=>setTimeout(()=>{
+    l.classList.add('vis');
+    beep([220,280,320,360,400,660][i],.06,.04,'sine');
+  }, delays[i]));
+
+  setTimeout(()=>{
+    bootEl.classList.add('done');
+    // reveal UI in staggered layers
+    const revealOrder=['hexbar','bins','hbar','arc','field'];
+    revealOrder.forEach((id,i)=>{
+      setTimeout(()=>{
+        const e=document.getElementById(id);
+        if(e) e.style.opacity='1';
+      }, i*120);
+    });
+    setTimeout(()=>{ bootEl.style.display='none'; }, 700);
+  }, 2100);
+})();
+
+// ─── FLICKER ───────────────────────────────────────
+(function schedFlicker(){
+  setTimeout(()=>{
+    document.body.style.animation='flicker .2s ease';
+    setTimeout(()=>{document.body.style.animation='';schedFlicker();},250);
+  },rng(38000,70000));
+})();
+</script>
 </body>
 </html>
