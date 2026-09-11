@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THEHILLBEYONDTHISONE — repository field</title>
+<meta name="description" content="An interactive phosphor terminal indexing the open-source work of thehillbeyondthisone: RubiKit, NotumHUD, Xanalytics, Hydra and NH_Standalone.">
+<meta name="author" content="thehillbeyondthisone">
+<meta name="theme-color" content="#030D14">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://thehillbeyondthisone.github.io/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="THEHILLBEYONDTHISONE">
+<meta property="og:title" content="THEHILLBEYONDTHISONE — repository field">
+<meta property="og:description" content="An interactive phosphor terminal indexing five open-source projects. Click the drifting numerals to sort them.">
+<meta property="og:url" content="https://thehillbeyondthisone.github.io/">
+<meta property="og:image" content="https://thehillbeyondthisone.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="THEHILLBEYONDTHISONE — repository field">
+<meta name="twitter:description" content="An interactive phosphor terminal indexing five open-source projects.">
+<meta name="twitter:image" content="https://thehillbeyondthisone.github.io/og.png">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23030D14'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='600' fill='%2352E0EE' text-anchor='middle'%3E7%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #030D14;
+  --ph:   #52E0EE;
+  --ph2:  #1A8898;
+  --ph3:  #0B3040;
+  --bdr:  #1A6070;
+  --glow: rgba(82,224,238,.55);
+  --glw2: rgba(82,224,238,.2);
+  /* chrome heights — referenced by the panels so the magic numbers live in one place */
+  --h-hbar: 38px;
+  --h-bins: 68px;
+  --h-hex:  21px;
+  --h-foot: calc(var(--h-bins) + var(--h-hex));
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+@supports (height:100dvh){html,body{height:100dvh}}
+body{background:var(--bg);color:var(--ph);font-family:'IBM Plex Mono',monospace;display:flex;flex-direction:column;position:relative}
+body::before{content:'';position:fixed;inset:0;z-index:900;background:repeating-linear-gradient(0deg,transparent 0px,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:901;background:radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.84) 100%);pointer-events:none}
+
+/* ── HEADER ── */
+#hbar{flex-shrink:0;height:var(--h-hbar);display:flex;align-items:center;padding:0 20px;border-bottom:1px solid var(--bdr);background:rgba(0,18,28,.9);position:relative;z-index:200;gap:0}
+.h-ident{font-size:11px;font-weight:500;letter-spacing:.22em;text-shadow:0 0 10px var(--glow),0 0 24px rgba(82,224,238,.28);border:1px solid var(--bdr);padding:4px 14px;background:rgba(82,224,238,.04)}
+.h-mid{flex:1;text-align:center;font-size:9px;letter-spacing:.2em;color:var(--ph);text-shadow:0 0 8px var(--glow)}
+.h-right{display:flex;align-items:center;gap:12px}
+.h-globe{width:15px;height:15px;border:1.5px solid var(--ph2);border-radius:50%;position:relative;flex-shrink:0;opacity:.65}
+.h-globe::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--ph2);transform:translateY(-50%)}
+.h-globe::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--ph2);transform:translateX(-50%)}
+.h-btn{font-family:inherit;font-size:8px;letter-spacing:.15em;color:var(--ph2);cursor:pointer;border:1px solid var(--bdr);padding:3px 9px;transition:all .15s;user-select:none;white-space:nowrap;background:transparent}
+.h-btn:hover{color:var(--ph);border-color:var(--ph);box-shadow:0 0 8px var(--glw2)}
+#gear-btn{font-family:inherit;background:transparent;font-size:13px;line-height:1;border:1px solid var(--bdr);padding:3px 7px;cursor:pointer;color:var(--ph2);transition:all .18s;user-select:none;display:none}
+#gear-btn.unlocked{display:block}
+#gear-btn:hover{color:var(--ph);border-color:var(--ph);box-shadow:0 0 8px var(--glw2)}
+#gear-btn.active{color:var(--ph);border-color:var(--ph);background:rgba(82,224,238,.06)}
+
+/* ── ARC ── */
+#arc{position:absolute;top:var(--h-hbar);left:0;right:0;height:24px;overflow:hidden;z-index:199;pointer-events:none}
+#arc svg{width:100%;height:100%}
+
+/* ── CANVAS FIELD ── */
+#field{flex:1;position:relative;overflow:hidden;cursor:crosshair}
+#fc{position:absolute;inset:0;width:100%;height:100%}
+
+/* repo nodes — positioned absolutely over canvas */
+.rnode{
+  --warp-sc:1;            /* written every frame by the warp field */
+  --hover-sc:1;           /* written by :hover / :focus-visible     */
+  position:absolute;border:1px solid var(--ph);border-radius:3px;
+  background:rgba(3,13,20,.93);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;
+  font:inherit;color:inherit;text-align:center;padding:0;
+  transition:box-shadow .18s,border-color .18s,transform .18s;z-index:50;
+  pointer-events:all;transform-origin:center center;
+  transform:scale(calc(var(--warp-sc) * var(--hover-sc)));
+}
+.rnode:hover,.rnode:focus-visible{--hover-sc:1.09;border-color:var(--ph);box-shadow:0 0 20px var(--glow),0 0 3px var(--glow),inset 0 0 14px rgba(82,224,238,.07)}
+.rnode-pulse{position:absolute;inset:-5px;border:1px solid var(--ph);border-radius:4px;animation:rpulse 2.6s ease-in-out infinite;pointer-events:none;opacity:0}
+@keyframes rpulse{0%{opacity:.55;transform:scale(1)}100%{opacity:0;transform:scale(1.2)}}
+.rnode-no{font-size:6.5px;letter-spacing:.2em;color:var(--ph2);margin-bottom:2px}
+.rnode-nm{font-weight:600;letter-spacing:.09em;color:var(--ph);text-shadow:0 0 8px var(--glow);text-align:center;line-height:1.2}
+
+/* ── BINS ── */
+#bins{flex-shrink:0;height:var(--h-bins);background:rgba(0,16,26,.92);border-top:1px solid var(--bdr);display:flex;z-index:200}
+.bin{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-right:1px solid var(--ph3);padding:7px 5px;cursor:pointer;transition:background .15s;position:relative;overflow:hidden}
+.bin:last-child{border-right:none}
+.bin:hover{background:rgba(82,224,238,.05)}
+.bin.lit{background:rgba(82,224,238,.1)}
+.bin-no{font-size:8px;letter-spacing:.2em;color:var(--ph2)}
+.bin-nm{font-size:7px;letter-spacing:.12em;color:var(--ph);text-shadow:0 0 6px var(--glow);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:96%}
+.bin-track{width:88%;height:7px;border:1px solid var(--bdr);background:rgba(0,0,0,.5);overflow:hidden}
+.bin-fill{height:100%;background:var(--ph2);box-shadow:0 0 5px var(--glow);transition:width .32s ease}
+.bin-pct{font-size:7.5px;letter-spacing:.12em;color:var(--ph)}
+
+/* ── HEXBAR ── */
+#hexbar{flex-shrink:0;height:var(--h-hex);display:flex;align-items:center;justify-content:center;font-size:8.5px;letter-spacing:.22em;color:var(--ph2);border-top:1px solid var(--ph3);background:rgba(0,6,12,.92);z-index:200}
+
+/* ── SETTINGS PANEL ── */
+#settings{
+  position:fixed;top:var(--h-hbar);right:0;
+  width:302px;
+  max-height:calc(100% - var(--h-hbar) - var(--h-foot));
+  overflow-y:auto;
+  background:rgba(2,10,18,.97);
+  border-left:1px solid var(--bdr);
+  border-bottom:1px solid var(--bdr);
+  z-index:600;
+  transform:translateY(-8px);
+  opacity:0;pointer-events:none;
+  transition:transform .24s cubic-bezier(.4,0,.2,1),opacity .2s ease;
+  box-shadow:-6px 6px 28px rgba(0,0,0,.8);
+}
+#settings::-webkit-scrollbar{width:3px}
+#settings::-webkit-scrollbar-thumb{background:var(--ph3)}
+#settings.open{transform:translateY(0);opacity:1;pointer-events:all}
+.set-head{padding:12px 16px 10px;border-bottom:1px solid var(--ph3);font-size:8px;letter-spacing:.22em;color:var(--ph2)}
+.set-body{padding:14px 16px}
+.set-section{margin-bottom:18px}
+.set-lbl{font-size:7.5px;letter-spacing:.2em;color:var(--ph2);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--ph3)}
+
+/* slider rows */
+.srow{display:grid;grid-template-columns:100px minmax(0,1fr) 44px;align-items:center;margin-bottom:10px;gap:10px}
+.srow-lbl{font-size:8px;letter-spacing:.13em;color:var(--ph)}
+.srow-val{
+  font-size:10px;letter-spacing:.04em;color:var(--ph);text-align:right;
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
+  text-shadow:0 0 5px var(--glow);
+}
+.srow-val.chg{color:#fff;text-shadow:0 0 10px var(--glow),0 0 22px var(--glow)}
+.srow-unit{display:block;font-size:7px;letter-spacing:.08em;color:var(--ph2);text-shadow:none;margin-top:1px}
+input[type=range]{
+  width:100%;min-width:0;-webkit-appearance:none;appearance:none;height:3px;
+  background:var(--ph3);outline:none;cursor:pointer;
+  border:none;border-radius:0;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:10px;height:10px;
+  background:var(--ph);border:none;cursor:pointer;border-radius:0;
+  box-shadow:0 0 6px var(--glow);
+}
+input[type=range]::-moz-range-thumb{
+  width:10px;height:10px;background:var(--ph);border:none;border-radius:0;box-shadow:0 0 6px var(--glow);cursor:pointer;
+}
+
+/* toggle rows for repos */
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.trow-lbl{font-size:8px;letter-spacing:.13em;color:var(--ph)}
+.tog{
+  width:28px;height:13px;background:var(--ph3);border:1px solid var(--bdr);padding:0;
+  position:relative;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0;
+}
+.tog.on{background:rgba(82,224,238,.2);border-color:var(--ph)}
+.tog::after{
+  content:'';position:absolute;top:1px;left:1px;
+  width:9px;height:9px;background:var(--ph2);
+  transition:transform .2s,background .2s;
+}
+.tog.on::after{transform:translateX(15px);background:var(--ph)}
+
+/* ── INSPECTOR ── */
+#inspector{
+  position:fixed;top:var(--h-hbar);right:0;bottom:var(--h-foot);width:320px;
+  background:rgba(2,10,18,.97);border-left:1px solid var(--bdr);
+  z-index:500;transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;box-shadow:-6px 0 28px rgba(0,0,0,.7);
+}
+#inspector.open{transform:translateX(0)}
+.ins-head{padding:15px 18px 13px;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.ins-title{font-size:14px;font-weight:500;letter-spacing:.07em;text-shadow:0 0 10px var(--glow)}
+.ins-sub{font-size:7px;letter-spacing:.2em;color:var(--ph2);margin-top:4px}
+.ins-close{font-family:inherit;background:transparent;border:none;font-size:20px;color:var(--ph2);cursor:pointer;line-height:1;transition:color .12s;flex-shrink:0}
+.ins-close:hover{color:var(--ph);text-shadow:0 0 8px var(--glow)}
+.ins-nav{font-family:inherit;background:transparent;font-size:11px;color:var(--ph2);cursor:pointer;border:1px solid var(--bdr);padding:2px 7px;transition:all .12s;user-select:none;line-height:1.6}
+.ins-nav:hover{color:var(--ph);border-color:var(--ph);box-shadow:0 0 6px var(--glw2)}
+.ins-body{flex:1;overflow-y:auto;padding:16px 18px}
+.ins-body::-webkit-scrollbar{width:2px}
+.ins-body::-webkit-scrollbar-thumb{background:var(--ph3)}
+.ins-sec{margin-bottom:18px}
+.ins-sec-lbl{font-size:7.5px;letter-spacing:.22em;color:var(--ph2);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--ph3)}
+.ins-desc{font-size:10px;line-height:1.95;color:rgba(82,224,238,.78);letter-spacing:.04em;border-left:2px solid var(--ph3);padding-left:12px}
+.ins-tags{display:flex;flex-wrap:wrap;gap:5px}
+.ins-tag{font-size:7.5px;letter-spacing:.13em;border:1px solid var(--bdr);padding:2px 8px;color:var(--ph2);background:rgba(82,224,238,.03)}
+.ins-kv{display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.12em;margin-bottom:7px}
+.ins-k{color:var(--ph2)}.ins-v{color:var(--ph);text-shadow:0 0 5px var(--glw2)}
+.ins-prog-track{height:7px;background:var(--ph3);border:1px solid var(--bdr);overflow:hidden;margin-bottom:4px}
+.ins-prog-fill{height:100%;background:var(--ph);box-shadow:0 0 6px var(--glow);transition:width .55s .08s ease}
+.ins-link{display:flex;align-items:center;justify-content:center;gap:8px;font-size:8.5px;letter-spacing:.15em;color:var(--ph);text-decoration:none;border:1px solid var(--bdr);padding:9px 16px;transition:background .15s,box-shadow .15s;margin-top:4px}
+.ins-link:hover{background:rgba(82,224,238,.08);box-shadow:0 0 12px var(--glw2)}
+
+/* with the warp field live the scale is driven per frame, so easing it would
+   fight the spring — the transition is dropped only in that mode */
+body.reactive .rnode{transition:box-shadow .18s,border-color .18s}
+
+/* keyboard focus — visible everywhere, never on mouse click */
+:focus-visible{outline:1px solid var(--ph);outline-offset:2px}
+.tog:focus-visible,input[type=range]:focus-visible{outline:1px solid var(--ph);outline-offset:3px}
+
+/* reset row at the foot of the settings panel */
+.set-foot{display:flex;gap:8px;padding:0 16px 16px}
+.set-btn{
+  flex:1;font-family:inherit;font-size:8px;letter-spacing:.16em;
+  color:var(--ph2);background:transparent;border:1px solid var(--bdr);
+  padding:7px 8px;cursor:pointer;transition:all .15s;
+}
+.set-btn:hover{color:var(--ph);border-color:var(--ph);box-shadow:0 0 8px var(--glw2)}
+
+/* ── NOSCRIPT / CRAWLER FALLBACK ── */
+#nojs{position:fixed;inset:0;z-index:3000;background:var(--bg);padding:40px 24px;overflow:auto}
+#nojs h1{font-size:13px;letter-spacing:.2em;font-weight:600;margin-bottom:6px}
+#nojs p{font-size:11px;line-height:1.9;color:var(--ph2);max-width:62ch;margin-bottom:22px}
+#nojs li{list-style:none;margin-bottom:14px}
+#nojs a{color:var(--ph);font-size:12px;letter-spacing:.08em}
+#nojs span{display:block;font-size:10px;line-height:1.8;color:var(--ph2);max-width:62ch}
+
+/* ── MOBILE ── */
+@media (max-width:480px){ .h-mid{display:none} }
+@media (max-width:560px){
+  :root{--h-bins:60px}
+  #settings,#inspector{width:100%;left:0;right:0}
+  .h-mid{font-size:8px;letter-spacing:.12em}
+  .h-ident{font-size:9px;letter-spacing:.14em;padding:4px 8px}
+  .h-right{gap:7px}
+  #hex-keys{display:none}
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  .rnode-pulse{display:none}
+}
+
+/* ── BURST / TRAIL ── */
+@keyframes burst{0%{transform:scale(1);opacity:1}100%{transform:scale(4);opacity:0}}
+.burst{position:fixed;pointer-events:none;z-index:2000;width:20px;height:20px;margin:-10px 0 0 -10px;border:1px solid var(--ph);border-radius:50%;animation:burst .38s ease-out forwards}
+@keyframes trail{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(.1)}}
+.trail{position:fixed;pointer-events:none;z-index:1999;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;background:var(--ph);border-radius:50%;animation:trail .48s ease-out forwards}
+
+/* ── BOOT ── */
+#boot{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;pointer-events:none;transition:opacity .5s ease}
+#boot.done{opacity:0}
+.boot-line{font-size:9px;letter-spacing:.22em;color:var(--ph2);opacity:0;transition:opacity .25s ease}
+.boot-line.vis{opacity:1}
+#boot-cursor{display:inline-block;width:7px;height:12px;background:var(--ph);animation:bcur .7s step-end infinite;vertical-align:middle;margin-left:3px}
+@keyframes bcur{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── FLICKER ── */
+@keyframes flicker{0%,100%{opacity:1}49%{opacity:1}50%{opacity:.88}51%{opacity:1}74%{opacity:.95}75%{opacity:1}}
+</style>
+</head>
+<body>
+
+<div id="hbar">
+  <div class="h-ident">THEHILLBEYONDTHISONE</div>
+  <div class="h-mid"><span id="pct-hd">0</span>% INDEXED · <span id="sorted-ct">0</span> SORTED</div>
+  <div class="h-right">
+    <div class="h-globe" aria-hidden="true"></div>
+    <a class="h-btn" id="gh-btn" href="https://github.com/thehillbeyondthisone" rel="me noopener" style="text-decoration:none">[ GITHUB ]</a>
+    <button type="button" class="h-btn" id="snd-btn" aria-pressed="false">[ SND: OFF ]</button>
+    <button type="button" id="gear-btn" aria-label="System configuration" aria-expanded="false" aria-controls="settings">⚙</button>
+  </div>
+</div>
+
+<div id="arc" aria-hidden="true"><svg viewBox="0 0 1440 24" preserveAspectRatio="none" fill="none">
+  <path d="M0 24 Q720 -1 1440 24" stroke="rgba(82,224,238,.16)" stroke-width="1"/>
+</svg></div>
+
+<div id="field">
+  <canvas id="fc" aria-hidden="true"></canvas>
+  <!-- repo nodes rendered over canvas -->
+</div>
+
+<div id="bins"></div>
+<div id="hexbar"><span id="hex2">0x15DB4A : 0x0AEAFC</span><span id="hex-keys" style="margin-left:32px;color:var(--ph3);letter-spacing:.18em;font-size:7.5px;opacity:.7">[ KEYS: 1–5 ENTRIES · ESC DISMISS ]</span></div>
+
+<!-- SETTINGS -->
+<div id="settings" role="dialog" aria-label="System configuration">
+  <div class="set-head">SYSTEM CONFIGURATION</div>
+  <div class="set-body">
+    <div class="set-section">
+      <div class="set-lbl" id="lbl-repos">DISPLAY · REPOSITORIES</div>
+      <div id="repo-toggles" role="group" aria-labelledby="lbl-repos"></div>
+      <div class="trow" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--ph3)">
+        <span class="trow-lbl" id="lbl-nr">NODE REACTIVE</span>
+        <button type="button" class="tog" id="tog-nodereact" role="switch" aria-checked="false" aria-labelledby="lbl-nr"></button>
+      </div>
+    </div>
+    <div class="set-section">
+      <div class="set-lbl">FIELD PARAMETERS</div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-density">NUMBER DENSITY</label>
+        <input type="range" id="sl-density" min="0" max="100" value="42" step="1">
+        <span class="srow-val" id="vl-density">42<span class="srow-unit" id="vl-density-u"></span></span>
+      </div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-rate">DIGIT SPEED</label>
+        <input type="range" id="sl-rate" min="0" max="100" value="48" step="1">
+        <span class="srow-val" id="vl-rate">48<span class="srow-unit" id="vl-rate-u"></span></span>
+      </div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-shim">SHIMMER FREQ</label>
+        <input type="range" id="sl-shim" min="0" max="100" value="47" step="1">
+        <span class="srow-val" id="vl-shim">47<span class="srow-unit" id="vl-shim-u"></span></span>
+      </div>
+    </div>
+    <div class="set-section">
+      <div class="set-lbl">Z-BLOOM</div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-bcount">BLOOM COUNT</label>
+        <input type="range" id="sl-bcount" min="0" max="100" value="75" step="1">
+        <span class="srow-val" id="vl-bcount">75<span class="srow-unit" id="vl-bcount-u"></span></span>
+      </div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-bspeed">BLOOM SPEED</label>
+        <input type="range" id="sl-bspeed" min="0" max="100" value="36" step="1">
+        <span class="srow-val" id="vl-bspeed">36<span class="srow-unit" id="vl-bspeed-u"></span></span>
+      </div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-bsize">BLOOM SIZE</label>
+        <input type="range" id="sl-bsize" min="0" max="100" value="50" step="1">
+        <span class="srow-val" id="vl-bsize">50<span class="srow-unit" id="vl-bsize-u"></span></span>
+      </div>
+    </div>
+    <div class="set-section">
+      <div class="set-lbl">WARP FIELD</div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-jelly">JELLINESS</label>
+        <input type="range" id="sl-jelly" min="0" max="100" value="100" step="1">
+        <span class="srow-val" id="vl-jelly">100<span class="srow-unit" id="vl-jelly-u"></span></span>
+      </div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-wr">WARP RADIUS</label>
+        <input type="range" id="sl-wr" min="0" max="100" value="50" step="1">
+        <span class="srow-val" id="vl-wr">50<span class="srow-unit" id="vl-wr-u"></span></span>
+      </div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-ws">WARP STRENGTH</label>
+        <input type="range" id="sl-ws" min="0" max="100" value="62" step="1">
+        <span class="srow-val" id="vl-ws">62<span class="srow-unit" id="vl-ws-u"></span></span>
+      </div>
+      <div class="srow">
+        <label class="srow-lbl" for="sl-wsc">WARP SCALE</label>
+        <input type="range" id="sl-wsc" min="0" max="100" value="62" step="1">
+        <span class="srow-val" id="vl-wsc">62<span class="srow-unit" id="vl-wsc-u"></span></span>
+      </div>
+    </div>
+  </div>
+  <div class="set-foot">
+    <button type="button" class="set-btn" id="btn-reset">RESTORE DEFAULTS</button>
+  </div>
+</div>
+
+<!-- INSPECTOR -->
+<div id="inspector" role="dialog" aria-modal="false" aria-labelledby="ins-title" aria-hidden="true">
+  <div class="ins-head">
+    <div><h2 class="ins-title" id="ins-title">—</h2><div class="ins-sub" id="ins-sub">REPOSITORY ENTRY</div></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <button type="button" class="ins-nav" id="ins-prev" aria-label="Previous repository">◀</button>
+      <button type="button" class="ins-nav" id="ins-next" aria-label="Next repository">▶</button>
+      <button type="button" class="ins-close" id="ins-close" aria-label="Close">×</button>
+    </div>
+  </div>
+  <div class="ins-body">
+    <div class="ins-sec"><div class="ins-sec-lbl">DESCRIPTION</div><p class="ins-desc" id="ins-desc">—</p></div>
+    <div class="ins-sec">
+      <div class="ins-sec-lbl">SORT PROGRESS</div>
+      <div class="ins-prog-track"><div class="ins-prog-fill" id="ins-prog" style="width:0%"></div></div>
+      <div class="ins-kv" style="margin-top:4px"><span class="ins-k">COMPLETION</span><span class="ins-v" id="ins-pct-v">0%</span></div>
+    </div>
+    <div class="ins-sec">
+      <div class="ins-sec-lbl">METADATA</div>
+      <div class="ins-kv"><span class="ins-k">LANGUAGE</span><span class="ins-v" id="ins-lang">—</span></div>
+      <div class="ins-kv"><span class="ins-k">POPULARITY</span><span class="ins-v" id="ins-pop">—</span></div>
+      <div class="ins-kv"><span class="ins-k">STATUS</span><span class="ins-v" id="ins-status">ACTIVE</span></div>
+    </div>
+    <div class="ins-sec"><div class="ins-sec-lbl">TAGS</div><div class="ins-tags" id="ins-tags"></div></div>
+    <div class="ins-sec"><a class="ins-link" id="ins-link" href="#" target="_blank">ACCESS REPOSITORY →</a></div>
+  </div>
+</div>
+
+<div id="boot" aria-hidden="true">
+  <div class="boot-line" id="bl-0">THEHILLBEYONDTHISONE · TERMINAL v2.1</div>
+  <div class="boot-line" id="bl-1">INITIALIZING FIELD MATRIX . . .</div>
+  <div class="boot-line" id="bl-2">LOADING REPOSITORY INDEX . . .</div>
+  <div class="boot-line" id="bl-3">ESTABLISHING SORT CHANNELS . . .</div>
+  <div class="boot-line" id="bl-4">CALIBRATING WARP FIELD . . .</div>
+  <div class="boot-line" id="bl-5">SYSTEM READY<span id="boot-cursor"></span></div>
+</div>
+
+<noscript>
+<div id="nojs">
+  <h1>THEHILLBEYONDTHISONE</h1>
+  <p>The interactive terminal needs JavaScript. Here is the index in plain text.</p>
+  <ul>
+    <li><a href="https://github.com/thehillbeyondthisone/RubiKit">RubiKit</a>
+      <span>Modular plugin framework for AOSharp — an OS-style foundation for structured, composable game extensions, with HTTP and SSE transport built in.</span></li>
+    <li><a href="https://github.com/thehillbeyondthisone/NotumHUD">NotumHUD</a>
+      <span>Real-time character stats overlay for Anarchy Online: health, nano, XP and cooldowns rendered live via AOSharp.</span></li>
+    <li><a href="https://github.com/thehillbeyondthisone/Xanalytics">Xanalytics</a>
+      <span>Live loot and XP analytics through log tailing — raw game data surfaced as structured insight in real time.</span></li>
+    <li><a href="https://github.com/thehillbeyondthisone/Hydra">Hydra</a>
+      <span>Many-headed sensor observer that unifies disparate data feeds into one surface: multiple inputs monitored, correlated and reconciled.</span></li>
+    <li><a href="https://github.com/thehillbeyondthisone/NotumHUD_standalone">NH_Standalone</a>
+      <span>Standalone NotumHUD, decoupled from the plugin stack so it can be deployed without RubiKit.</span></li>
+    <li><a href="https://github.com/thehillbeyondthisone">All repositories on GitHub</a></li>
+  </ul>
+</div>
+</noscript>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProfilePage","name":"THEHILLBEYONDTHISONE","url":"https://thehillbeyondthisone.github.io/","mainEntity":{"@type":"Person","alternateName":"thehillbeyondthisone","url":"https://github.com/thehillbeyondthisone"}}
+</script>
+
+<script>
+// ─── REPOS ─────────────────────────────────────────
+const REPOS = [
+  {id:0,num:'01',name:'RubiKit',       short:'RUBIKIT', lang:'C#',        pop:'★★★★☆',stars:4,nodeSize:78,status:'ACTIVE',
+   desc:'Modular plugin framework for AOSharp — an OS-style foundation for structured, composable game extensions. HTTP and SSE transport built-in.',
+   tags:['FRAMEWORK','C#','HTTP','SSE','AOSHARP'],url:'https://github.com/thehillbeyondthisone/RubiKit',pct:9,visible:true},
+  {id:1,num:'02',name:'NotumHUD',       short:'NOTUMHUD',lang:'C# / JS',   pop:'★★★☆☆',stars:3,nodeSize:62,status:'ACTIVE',
+   desc:'Real-time character stats overlay for Anarchy Online. Live HUD rendering health, nano, XP, cooldowns via AOSharp.',
+   tags:['C#','JAVASCRIPT','AOSHARP','REAL-TIME'],url:'https://github.com/thehillbeyondthisone/NotumHUD',pct:30,visible:true},
+  {id:2,num:'03',name:'Xanalytics',     short:'XANALY',  lang:'JAVASCRIPT',pop:'★★☆☆☆',stars:2,nodeSize:52,status:'ACTIVE',
+   desc:'Live loot and XP analytics via log tailing. Raw game data surfaced as structured, actionable insight in real time.',
+   tags:['ANALYTICS','LOG PARSING','REAL-TIME','XP'],url:'https://github.com/thehillbeyondthisone/Xanalytics',pct:33,visible:true},
+  {id:3,num:'04',name:'Hydra',          short:'HYDRA',   lang:'JAVASCRIPT',pop:'★★☆☆☆',stars:2,nodeSize:52,status:'ACTIVE',
+   desc:'Many-headed sensor observer. Unifies disparate data feeds into one surface — multiple inputs monitored, correlated, reconciled.',
+   tags:['SENSORS','AGGREGATION','MONITORING','IoT'],url:'https://github.com/thehillbeyondthisone/Hydra',pct:18,visible:true},
+  {id:4,num:'05',name:'NH_Standalone',  short:'NH·SA',   lang:'C# / JS',   pop:'★☆☆☆☆',stars:1,nodeSize:42,status:'ACTIVE',
+   desc:'Standalone NotumHUD — decoupled from the plugin stack for independent deployment without RubiKit.',
+   tags:['STANDALONE','HUD','OVERLAY'],url:'https://github.com/thehillbeyondthisone/NotumHUD_standalone',pct:11,visible:true},
+];
+
+// ─── SETTINGS STATE ────────────────────────────────
+// DEFAULTS is the single source of truth for the shipped look. Every value in S
+// below is derived from it by the slider transforms, so there is no second copy
+// to drift out of sync — change a number here and the page changes with it.
+const DEFAULTS = {
+  'sl-density':  42,   // NUMBER DENSITY
+  'sl-rate':     48,   // DIGIT SPEED
+  'sl-shim':     47,   // SHIMMER FREQ
+  'sl-bcount':   75,   // BLOOM COUNT
+  'sl-bspeed':   36,   // BLOOM SPEED
+  'sl-bsize':    50,   // BLOOM SIZE
+  'sl-jelly':   100,   // JELLINESS
+  'sl-wr':       50,   // WARP RADIUS
+  'sl-ws':       62,   // WARP STRENGTH
+  'sl-wsc':      62,   // WARP SCALE
+  nodeReactive: true,
+};
+
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const S = {
+  density:    102,    // lerp(10,230, .42)
+  digitRate: 1726,    // lerp(3300,20, .48)
+  shimRate:  2606,    // lerp(4900,20, .47)
+  warpR:      75,     // .50 * 150
+  warpStr:  0.136,    // .62 * 0.22
+  warpScale:0.050,    // .62 * 0.08
+  jelly:     0.20,    // 1.00 * 0.20
+  bloomCount:   5,    // round(lerp(0,6, .75))
+  bloomSpeed:0.000338,// lerp(0.00005,0.00085, .36)
+  bloomMaxSz:  46,    // lerp(10,82, .50)
+  nodeReactive: true,
+};
+
+// ─── UTILS ─────────────────────────────────────────
+const rng  = (a,b) => Math.random()*(b-a)+a;
+const ri   = (a,b) => Math.floor(rng(a,b+1));
+const lerp = (a,b,t) => a+(b-a)*t;
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+
+// ─── SOUND ─────────────────────────────────────────
+// Browsers refuse to start an AudioContext before a gesture, so sound is
+// opt-in: the context is created and resumed by the button press itself.
+let sndOn=false, actx=null;
+function ensureCtx(){
+  try{
+    if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+  }catch(e){ actx=null; }
+}
+function beep(freq=440,dur=.07,vol=.08,type='sine'){
+  if(!sndOn)return; ensureCtx(); if(!actx)return;
+  const o=actx.createOscillator(),g=actx.createGain();
+  o.connect(g);g.connect(actx.destination);
+  o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(vol,actx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
+  o.start();o.stop(actx.currentTime+dur);
+}
+const sndBtn=document.getElementById('snd-btn');
+sndBtn.textContent='[ SND: OFF ]';
+sndBtn.addEventListener('click',()=>{
+  sndOn=!sndOn;
+  sndBtn.textContent=`[ SND: ${sndOn?'ON':'OFF'} ]`;
+  sndBtn.setAttribute('aria-pressed',String(sndOn));
+  if(sndOn){ ensureCtx(); beep(880,.05,.06); }
+});
+
+// ─── SETTINGS: hidden, opened by clicking 2→7→5 in field ──
+const settingsEl = document.getElementById('settings');
+const gearBtn    = document.getElementById('gear-btn');
+let settingsOpen = false;
+
+function openSettings(){
+  settingsOpen=true;
+  settingsEl.classList.add('open');
+  gearBtn.classList.add('active');
+  gearBtn.setAttribute('aria-expanded','true');
+  if(inspectorOpen) closeInspector();
+}
+function closeSettings(){
+  settingsOpen=false;
+  settingsEl.classList.remove('open');
+  gearBtn.classList.remove('active');
+  gearBtn.setAttribute('aria-expanded','false');
+}
+document.getElementById('gear-btn').addEventListener('click',()=>{
+  settingsOpen ? closeSettings() : openSettings();
+});
+document.addEventListener('click',e=>{
+  if(settingsOpen && !settingsEl.contains(e.target) && e.target.id!=='gear-btn'){
+    closeSettings();
+  }
+});
+
+// Unlock state lives here so loadSettings() can restore it before anything
+// else runs. The 2→7→5 sequence in the field is what sets it the first time.
+let settingsUnlocked = false;
+function unlockSettings(silent){
+  settingsUnlocked = true;
+  gearBtn.classList.add('unlocked');
+  if(!silent){
+    gearBtn.classList.add('active');
+    setTimeout(()=>gearBtn.classList.remove('active'),600);
+    beep(880,.18,.09,'sine');
+  }
+}
+
+// ─── LOCALSTORAGE ──────────────────────────────────
+const LS_KEY    = 'thbo_settings_v2';
+const SLIDER_IDS = Object.keys(DEFAULTS).filter(k=>k.startsWith('sl-'));
+
+function saveSettings(){
+  const vals={};
+  SLIDER_IDS.forEach(id=>{ const el=document.getElementById(id); if(el) vals[id]=+el.value; });
+  vals.nodeReactive = S.nodeReactive;
+  vals.hidden       = REPOS.filter(r=>!r.visible).map(r=>r.id);
+  vals.unlocked     = settingsUnlocked;
+  try{ localStorage.setItem(LS_KEY,JSON.stringify(vals)); }catch(e){}
+}
+
+// Apply DEFAULTS to the DOM first, then let any saved overrides win. A stored
+// value has to be a finite 0–100 number or it is ignored, so a corrupt or
+// hand-edited entry degrades to the shipped default instead of a blank field.
+function applyDefaults(){
+  SLIDER_IDS.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=DEFAULTS[id]; });
+  S.nodeReactive = DEFAULTS.nodeReactive;
+  REPOS.forEach(r=>{ r.visible=true; });
+}
+
+function loadSettings(){
+  applyDefaults();
+  let vals=null;
+  try{ vals=JSON.parse(localStorage.getItem(LS_KEY)||'null'); }catch(e){}
+  if(!vals || typeof vals!=='object') return;
+  SLIDER_IDS.forEach(id=>{
+    const v=Number(vals[id]);
+    if(Number.isFinite(v) && v>=0 && v<=100){ const el=document.getElementById(id); if(el) el.value=v; }
+  });
+  if(typeof vals.nodeReactive==='boolean') S.nodeReactive=vals.nodeReactive;
+  if(Array.isArray(vals.hidden)) REPOS.forEach(r=>{ r.visible = !vals.hidden.includes(r.id); });
+  if(vals.unlocked===true) unlockSettings(true);
+}
+
+
+loadSettings();
+
+// Repo toggles — state reads from r.visible so the switch can never lie
+const togWrap  = document.getElementById('repo-toggles');
+const repoTogs = {};
+REPOS.forEach(r=>{
+  const row=document.createElement('div'); row.className='trow';
+  const lbl=document.createElement('span'); lbl.className='trow-lbl'; lbl.id='rl-'+r.id; lbl.textContent=r.short;
+  const tog=document.createElement('button');
+  tog.type='button'; tog.className='tog'; tog.dataset.id=r.id;
+  tog.setAttribute('role','switch');
+  tog.setAttribute('aria-labelledby','rl-'+r.id);
+  const paint=()=>{ tog.classList.toggle('on',r.visible); tog.setAttribute('aria-checked',String(r.visible)); };
+  paint();
+  repoTogs[r.id]=paint;
+  tog.addEventListener('click',()=>{
+    r.visible=!r.visible;
+    paint();
+    const el=document.querySelector(`.rnode[data-id="${r.id}"]`);
+    if(el) el.style.display=r.visible?'flex':'none';
+    saveSettings();
+  });
+  row.appendChild(lbl); row.appendChild(tog); togWrap.appendChild(row);
+});
+
+// Node reactive toggle
+const togNR = document.getElementById('tog-nodereact');
+function paintNR(){
+  togNR.classList.toggle('on', S.nodeReactive);
+  togNR.setAttribute('aria-checked', String(S.nodeReactive));
+  document.body.classList.toggle('reactive', S.nodeReactive);
+}
+togNR.addEventListener('click',()=>{
+  S.nodeReactive = !S.nodeReactive;
+  paintNR();
+  saveSettings();
+  if(!S.nodeReactive){
+    document.querySelectorAll('.rnode').forEach(e=>e.style.setProperty('--warp-sc','1'));
+  }
+});
+
+// Sliders — 0=off/min, 100=max. Each row shows the raw 0–100 position as the
+// headline numeral and the value it maps to underneath, so the panel reports
+// what the field is actually doing rather than an abstract percentage.
+const binds = [];
+function bindSlider(id, valId, fn, unit) {
+  const sl = document.getElementById(id);
+  const vl = document.getElementById(valId);
+  const un = document.getElementById(valId + '-u');
+  const update = (isInit) => {
+    const v = parseFloat(sl.value);
+    fn(v, isInit);
+    const u = unit ? unit(v) : '';
+    vl.firstChild.nodeValue = String(Math.round(v));
+    if(un) un.textContent = u;
+    sl.setAttribute('aria-valuetext', u ? `${Math.round(v)} — ${u}` : String(Math.round(v)));
+    if(!isInit){
+      vl.classList.add('chg');
+      clearTimeout(vl._t); vl._t = setTimeout(()=>vl.classList.remove('chg'), 260);
+    }
+  };
+  sl.addEventListener('input', () => { update(false); saveSettings(); });
+  binds.push(update);
+  update(true);
+}
+const secs = ms => (ms/1000).toFixed(ms<1000?2:1)+'s';
+
+bindSlider('sl-density','vl-density', (v,init)=>{ S.density    = Math.round(lerp(10, 230, v/100)); if(!init) rebuildNums(); }, ()=>S.density+' gl');
+bindSlider('sl-rate',   'vl-rate',   (v)     =>{ S.digitRate  = lerp(3300, 20,    v/100); }, ()=>secs(S.digitRate));
+bindSlider('sl-shim',   'vl-shim',   (v)     =>{ S.shimRate   = lerp(4900, 20,    v/100); }, ()=>secs(S.shimRate));
+bindSlider('sl-bcount', 'vl-bcount', (v,init)=>{ S.bloomCount = Math.round(lerp(0, 6, v/100)); if(!init) rebuildBloom(); }, ()=>S.bloomCount+'×');
+bindSlider('sl-bspeed', 'vl-bspeed', (v)     =>{ S.bloomSpeed = lerp(0.00005, 0.00085, v/100); }, ()=>(S.bloomSpeed*1000).toFixed(2));
+bindSlider('sl-bsize',  'vl-bsize',  (v)     =>{ S.bloomMaxSz = lerp(10, 82, v/100); }, ()=>Math.round(S.bloomMaxSz)+'px');
+bindSlider('sl-jelly',  'vl-jelly',  (v)     =>{ S.jelly      = v/100 * 0.20; }, ()=>S.jelly.toFixed(2));
+bindSlider('sl-wr',     'vl-wr',     (v)     =>{ S.warpR      = v/100 * 150; }, ()=>Math.round(S.warpR)+'px');
+bindSlider('sl-ws',     'vl-ws',     (v)     =>{ S.warpStr    = v/100 * 0.22; }, ()=>S.warpStr.toFixed(3));
+bindSlider('sl-wsc',    'vl-wsc',    (v)     =>{ S.warpScale  = v/100 * 0.08; }, ()=>S.warpScale.toFixed(3));
+
+paintNR();
+
+// Restore defaults — resets the panel, the field and the stored copy together.
+document.getElementById('btn-reset').addEventListener('click',()=>{
+  applyDefaults();
+  binds.forEach(u=>u(false));
+  paintNR();
+  REPOS.forEach(r=>{
+    repoTogs[r.id]();
+    const el=document.querySelector(`.rnode[data-id="${r.id}"]`);
+    if(el) el.style.display='flex';
+  });
+  rebuildNums(); rebuildBloom();
+  saveSettings();
+  beep(760,.09,.06);
+});
+
+// ─── BINS ──────────────────────────────────────────
+const binsEl=document.getElementById('bins');
+const binEls=[];
+let sortedCount=0;
+
+REPOS.forEach(r=>{
+  const d=document.createElement('div');
+  d.className='bin'; d.dataset.id=r.id;
+  d.innerHTML=`<div class="bin-no">${r.num}</div>
+    <div class="bin-nm">${r.short}</div>
+    <div class="bin-track"><div class="bin-fill" id="bf-${r.id}" style="width:${r.pct}%"></div></div>
+    <div class="bin-pct" id="bpct-${r.id}">${r.pct}%</div>`;
+  d.addEventListener('click',()=>openInspector(r.id));
+  binsEl.appendChild(d); binEls.push(d);
+});
+
+function setBinPct(id,pct){
+  REPOS[id].pct=clamp(pct,0,100);
+  document.getElementById('bf-'+id).style.width=REPOS[id].pct+'%';
+  document.getElementById('bpct-'+id).textContent=Math.round(REPOS[id].pct)+'%';
+  updateGlobal();
+}
+function updateGlobal(){
+  document.getElementById('pct-hd').textContent=Math.round(REPOS.reduce((s,r)=>s+r.pct,0)/REPOS.length);
+  document.getElementById('sorted-ct').textContent=sortedCount;
+}
+updateGlobal();
+
+// ─── INSPECTOR ─────────────────────────────────────
+const inspector=document.getElementById('inspector');
+let inspectorOpen=false, activeNode=null;
+document.getElementById('ins-close').addEventListener('click',closeInspector);
+
+function openInspector(id, fromHash){
+  if(settingsOpen) closeSettings();
+  const r=REPOS[id];
+  if(!r) return;
+  document.getElementById('ins-title').textContent=r.name;
+  document.getElementById('ins-sub').textContent='REPOSITORY · ENTRY '+r.num;
+  document.getElementById('ins-desc').textContent=r.desc;
+  document.getElementById('ins-lang').textContent=r.lang;
+  document.getElementById('ins-pop').textContent=r.pop;
+  const statusEl=document.getElementById('ins-status');
+  statusEl.textContent=r.pct>=100?'COMPLETE':r.status||'ACTIVE';
+  statusEl.style.color=r.pct>=100?'rgba(82,224,238,.5)':'';
+  document.getElementById('ins-link').href=r.url;
+  document.getElementById('ins-tags').innerHTML=r.tags.map(t=>`<span class="ins-tag">${t}</span>`).join('');
+  document.getElementById('ins-prog').style.width='0%';
+  document.getElementById('ins-pct-v').textContent=Math.round(r.pct)+'%';
+  inspector.classList.add('open'); inspectorOpen=true; activeNode=id;
+  inspector.setAttribute('aria-hidden','false');
+  setTimeout(()=>{ document.getElementById('ins-prog').style.width=r.pct+'%'; },80);
+  // shareable: thehillbeyondthisone.github.io/#rubikit opens straight to it
+  // history is unavailable on file:// and inside cross-origin frames, so the
+  // deep link is best-effort and never allowed to break opening a repo
+  const slug='#'+r.name.toLowerCase();
+  if(!fromHash && location.hash!==slug){ try{ history.replaceState(null,'',slug); }catch(e){} }
+  if(!fromHash) document.getElementById('ins-close').focus({preventScroll:true});
+  beep(660,.1,.07);
+}
+function closeInspector(){
+  inspector.classList.remove('open');
+  inspector.setAttribute('aria-hidden','true');
+  inspectorOpen=false; activeNode=null;
+  if(location.hash){ try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){} }
+}
+
+function openFromHash(){
+  const h=(location.hash||'').replace('#','').toLowerCase();
+  if(!h) return;
+  const r=REPOS.find(x=>x.name.toLowerCase()===h || x.short.toLowerCase()===h);
+  if(r) openInspector(r.id, true);
+}
+window.addEventListener('hashchange',openFromHash);
+
+document.getElementById('ins-prev').addEventListener('click',()=>{
+  if(activeNode===null)return;
+  openInspector((activeNode-1+REPOS.length)%REPOS.length);
+});
+document.getElementById('ins-next').addEventListener('click',()=>{
+  if(activeNode===null)return;
+  openInspector((activeNode+1)%REPOS.length);
+});
+
+// ─── CANVAS NUMBER FIELD ────────────────────────────
+const canvas = document.getElementById('fc');
+const ctx    = canvas.getContext('2d');
+const field  = document.getElementById('field');
+
+let W=0, H=0;
+let mx=-9999, my=-9999;
+
+// Back the canvas with real device pixels. Without this the glyphs are
+// resampled on every HiDPI screen and the whole field reads soft.
+let DPR = 1;
+function resize(){
+  W=field.clientWidth; H=field.clientHeight;
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width  = Math.round(W*DPR);
+  canvas.height = Math.round(H*DPR);
+  canvas.style.width  = W+'px';
+  canvas.style.height = H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+resize();
+// Resize rescales the field in place. Rebuilding from scratch used to throw the
+// nodes to new random spots, which looked like a glitch every time a phone
+// rotated or a desktop window was dragged.
+let _rto=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(_rto);
+  _rto=setTimeout(()=>{
+    const pw=W||1, ph=H||1;
+    resize();
+    const sx=W/pw, sy=H/ph;
+    nums.forEach(n=>{ n.hx*=sx; n.hy*=sy; });
+    relayoutNodes(sx,sy);
+  },180);
+});
+
+field.addEventListener('mousemove',e=>{
+  const r=field.getBoundingClientRect();
+  mx=e.clientX-r.left; my=e.clientY-r.top;
+});
+field.addEventListener('mouseleave',()=>{mx=-9999;my=-9999;});
+// Touch: the lens follows the finger on contact as well as on drag, so the
+// warp field is reachable on a phone instead of being mouse-only.
+function touchPos(e){
+  const t=e.touches[0]; if(!t) return;
+  const r=field.getBoundingClientRect();
+  mx=t.clientX-r.left; my=t.clientY-r.top;
+}
+field.addEventListener('touchstart',touchPos,{passive:true});
+field.addEventListener('touchmove', touchPos,{passive:true});
+field.addEventListener('touchend',()=>{setTimeout(()=>{mx=-9999;my=-9999;},420);},{passive:true});
+
+// ─── NUMBER OBJECTS ────────────────────────────────
+// Each num has a HOME position (hx,hy) — warp displaces it from home.
+const TIERS=[
+  {sz:9, wt:.48,opR:[.13,.26]},
+  {sz:13,wt:.27,opR:[.26,.46]},
+  {sz:18,wt:.14,opR:[.40,.60]},
+  {sz:26,wt:.07,opR:[.55,.72]},
+  {sz:38,wt:.04,opR:[.65,.82]},
+];
+function pickTier(){let r=Math.random(),a=0;for(const t of TIERS){a+=t.wt;if(r<a)return t;}return TIERS[0];}
+
+let nums=[];
+
+function mkNum(){
+  const tier=pickTier();
+  const baseOp=rng(...tier.opR);
+  const hx=rng(12,W-24);
+  const hy=rng(12,H-24);
+  return {
+    hx,hy,
+    dx:0,dy:0,       // current spring displacement
+    vx:0,vy:0,       // spring velocity
+    scDisp:0,scV:0,  // scale spring
+    sz:tier.sz,
+    baseOp,curOp:baseOp,
+    digit:ri(0,9),
+    driftX:rng(-.28,.28),
+    driftY:rng(-.18,.18),
+    dead:false
+  };
+}
+
+function rebuildNums(){
+  nums=[];
+  // a phone has neither the pixels nor the battery for a 230-glyph field
+  const cap = REDUCED ? 40 : (W < 560 ? 90 : 260);
+  const n = Math.min(S.density, cap);
+  for(let i=0;i<n;i++) nums.push(mkNum());
+}
+rebuildNums();
+
+// click on canvas — hit-test nums + detect 2→7→5 sequence
+const SEQ=[2,7,5]; let seqBuf=[];
+const SEQ_PITCHES=[440,660,880];
+
+field.addEventListener('click',e=>{
+  const fr=field.getBoundingClientRect();
+  const cx=e.clientX-fr.left, cy=e.clientY-fr.top;
+  // find topmost (last drawn) number under click
+  for(let i=nums.length-1;i>=0;i--){
+    const n=nums[i];
+    if(n.dead)continue;
+    const rx=n.hx+n.dx, ry=n.hy+n.dy;
+    if(cx>=rx-2&&cx<=rx+n.sz+2&&cy>=ry-n.sz&&cy<=ry+4){
+
+      if(!settingsUnlocked){
+        // advance buffer: only keep digits that extend the sequence
+        const nextExpected=SEQ[seqBuf.length];
+        if(n.digit===nextExpected){
+          seqBuf.push(n.digit);
+          beep(SEQ_PITCHES[seqBuf.length-1],.08,.05,'sine');
+          if(seqBuf.length===SEQ.length){
+            seqBuf=[];
+            unlockSettings(false);
+            saveSettings();
+          }
+        } else if(n.digit===SEQ[0]){
+          // wrong digit but it's the start — restart from 1
+          seqBuf=[n.digit];
+          beep(SEQ_PITCHES[0],.08,.05,'sine');
+        } else {
+          seqBuf=[];
+        }
+      }
+
+      sortNum(n,e.clientX,e.clientY);
+      return;
+    }
+  }
+});
+
+// ─── SORT ──────────────────────────────────────────
+function sortNum(n,cx,cy){
+  n.dead=true;
+  const b=document.createElement('div');
+  b.className='burst';b.style.cssText=`left:${cx}px;top:${cy}px`;
+  document.body.appendChild(b);setTimeout(()=>b.remove(),420);
+
+  const inc=REPOS.filter(r=>r.pct<100);
+  const target=inc.length?inc.reduce((a,b)=>b.pct<a.pct?b:a,inc[0]):REPOS[ri(0,REPOS.length-1)];
+  const bEl=binEls[target.id];
+  const br=bEl.getBoundingClientRect();
+  const tx=br.left+br.width/2, ty=br.top+br.height/2;
+
+  // trail
+  for(let i=1;i<=9;i++){
+    setTimeout(()=>{
+      const t=document.createElement('div');t.className='trail';
+      t.style.cssText=`left:${cx+(tx-cx)*(i/9)}px;top:${cy+(ty-cy)*(i/9)}px;animation-delay:${i*.018}s`;
+      document.body.appendChild(t);setTimeout(()=>t.remove(),520);
+    },i*24);
+  }
+
+  beep(ri(600,1100),.09,.07,'sine');
+  setTimeout(()=>{
+    setBinPct(target.id,target.pct+rng(2,5.5));
+    sortedCount++;
+    binEls[target.id].classList.add('lit');
+    setTimeout(()=>binEls[target.id].classList.remove('lit'),320);
+    beep(ri(280,480),.12,.06,'square');
+    if(activeNode===target.id){
+      document.getElementById('ins-prog').style.width=REPOS[target.id].pct+'%';
+      document.getElementById('ins-pct-v').textContent=Math.round(REPOS[target.id].pct)+'%';
+    }
+    updateGlobal();
+  },300);
+
+  setTimeout(()=>{
+    const idx=nums.indexOf(n);
+    if(idx>-1)nums.splice(idx,1);
+    nums.push(mkNum());
+  },480);
+}
+
+// ─── WARP FUNCTION ─────────────────────────────────
+// Convex lens: displaces numbers AWAY from cursor center,
+// with a smooth fall-off. Near cursor = big outward push + scale up.
+function warp(hx, hy){
+  const dx = hx - mx;
+  const dy = hy - my;
+  const dist = Math.sqrt(dx*dx+dy*dy) || 0.001;
+  const R = S.warpR;
+  if(dist >= R) return {ox:0, oy:0, sc:1, op:0};
+  // falloff: smooth convex lens profile  t=1 at center, 0 at edge
+  const t = 1 - dist/R;
+  const tSmooth = t*t*(3-2*t);   // smoothstep
+
+  const maxPush = R * S.warpStr;
+  const push = tSmooth * maxPush;
+  const nx = (dx/dist)*push;
+  const ny = (dy/dist)*push;
+
+  const sc = 1 + tSmooth * S.warpScale * 2.2;
+  const opBoost = tSmooth * .6;
+  return {ox:nx, oy:ny, sc, opBoost};
+}
+
+// ─── RENDER LOOP ───────────────────────────────────
+let lastShim=0, lastDigit=0, rafId=null;
+
+function frame(ts){
+  rafId = requestAnimationFrame(frame);
+
+  // periodic shimmer
+  if(ts-lastShim > S.shimRate){
+    lastShim=ts;
+    for(let i=0;i<4;i++){
+      const n=nums[ri(0,nums.length-1)];
+      if(n&&!n.dead){n.curOp=Math.min(.97,n.baseOp*2.6);setTimeout(()=>{if(!n.dead)n.curOp=n.baseOp;},260);}
+    }
+  }
+  // digit flip
+  if(ts-lastDigit > S.digitRate){
+    lastDigit=ts;
+    for(let i=0;i<6;i++){const n=nums[ri(0,nums.length-1)];if(n&&!n.dead)n.digit=ri(0,9);}
+  }
+
+  ctx.clearRect(0,0,W,H);
+  tickBlooms(ts);
+
+  // draw cursor lens glow (soft radial)
+  if(mx>0&&mx<W&&my>0&&my<H){
+    const R=S.warpR;
+    const grad=ctx.createRadialGradient(mx,my,R*.05,mx,my,R);
+    grad.addColorStop(0,'rgba(82,224,238,.045)');
+    grad.addColorStop(1,'rgba(82,224,238,0)');
+    ctx.fillStyle=grad;
+    ctx.beginPath();ctx.arc(mx,my,R,0,Math.PI*2);ctx.fill();
+  }
+
+  nums.forEach(n=>{
+    if(n.dead) return;
+
+    // drift home position
+    n.hx+=n.driftX*.14;
+    n.hy+=n.driftY*.10;
+    if(n.hx<8||n.hx>W-8){n.driftX*=-1;n.hx=clamp(n.hx,8,W-8);}
+    if(n.hy<8||n.hy>H-8){n.driftY*=-1;n.hy=clamp(n.hy,8,H-8);}
+
+    // --- spring physics toward warp target ---
+    // jelliness: 0 = snappy (high stiffness, high loss), 1 = wobbly (low stiffness, low loss)
+    const jelly     = S.jelly;
+    const stiffness = lerp(0.22, 0.055, jelly);
+    const damping   = lerp(0.60, 0.88,  jelly);
+
+    const {ox=0,oy=0,sc=1,opBoost=0}=warp(n.hx,n.hy);
+
+    // positional spring
+    const ax = (ox - n.dx) * stiffness;
+    const ay = (oy - n.dy) * stiffness;
+    n.vx = n.vx * damping + ax;
+    n.vy = n.vy * damping + ay;
+    n.dx += n.vx;
+    n.dy += n.vy;
+
+    // hard clamp: numbers can never stray more than maxDisp from home
+    const maxDisp = S.warpR * 0.38;
+    const dispLen = Math.sqrt(n.dx*n.dx + n.dy*n.dy);
+    if(dispLen > maxDisp){
+      const scale = maxDisp / dispLen;
+      n.dx *= scale; n.dy *= scale;
+      n.vx *= 0.2;   n.vy *= 0.2;   // shed most velocity at boundary
+    }
+
+    // scale spring
+    const scTarget = sc - 1;
+    const asc = (scTarget - n.scDisp) * stiffness;
+    n.scV    = n.scV * damping + asc;
+    n.scDisp = clamp(n.scDisp + n.scV, -0.05, S.warpScale * 1.4);
+    const finalSc = 1 + n.scDisp;
+
+    const wx = n.hx + n.dx;
+    const wy = n.hy + n.dy;
+    const op = clamp(n.curOp + opBoost, 0, 1);
+
+    ctx.save();
+    ctx.translate(wx, wy);
+    ctx.scale(finalSc, finalSc);
+    ctx.font=`${n.sz}px 'IBM Plex Mono'`;
+    ctx.textBaseline='bottom';
+
+    // glow — also slightly boosted by jelly overshoot energy
+    const energy   = Math.sqrt(n.vx*n.vx+n.vy*n.vy);
+    const glowBoost= clamp(energy*.018, 0, .35);
+    const glowAlpha= clamp(op*.7 + opBoost*.4 + glowBoost, 0, .95);
+    ctx.shadowColor=`rgba(82,224,238,${glowAlpha.toFixed(2)})`;
+    ctx.shadowBlur = n.sz*.8 + opBoost*n.sz*1.4 + energy*n.sz*.12;
+    ctx.fillStyle  =`rgba(82,224,238,${op.toFixed(3)})`;
+    ctx.fillText(n.digit,0,0);
+    ctx.restore();
+  });
+
+  // ── repo nodes: float + optional warp, all at 60fps ──
+  nodeObjs.forEach(no=>{
+    if(no.el.style.display==='none') return;
+    const {MARGIN,sz} = no;
+
+    // smooth drift of home position
+    no.hx += no.driftX * 0.10;
+    no.hy += no.driftY * 0.07;
+    if(no.hx<MARGIN||no.hx>W-sz-MARGIN){ no.driftX*=-1; no.hx=clamp(no.hx,MARGIN,W-sz-MARGIN); }
+    if(no.hy<MARGIN||no.hy>H-sz-MARGIN){ no.driftY*=-1; no.hy=clamp(no.hy,MARGIN,H-sz-MARGIN); }
+
+    let finalX=no.hx, finalY=no.hy, finalSc=1;
+
+    if(S.nodeReactive){
+      const {ox=0,oy=0,sc=1}=warp(no.hx+sz/2, no.hy+sz/2);
+      const stiff=lerp(0.18,0.04,S.jelly), damp=lerp(0.65,0.90,S.jelly);
+      const ax=(ox-no.dx)*stiff, ay=(oy-no.dy)*stiff;
+      no.vx=no.vx*damp+ax; no.vy=no.vy*damp+ay;
+      no.dx+=no.vx;         no.dy+=no.vy;
+      const md=S.warpR*0.32, dl=Math.sqrt(no.dx*no.dx+no.dy*no.dy);
+      if(dl>md){no.dx*=md/dl;no.dy*=md/dl;no.vx*=.15;no.vy*=.15;}
+      finalX+=no.dx; finalY+=no.dy; finalSc=sc;
+    } else {
+      // bleed back spring to zero when reactive is off
+      no.dx*=0.85; no.dy*=0.85; no.vx*=0.85; no.vy*=0.85;
+    }
+
+    // lerp render position for extra smoothness
+    no.nx = lerp(no.nx||finalX, finalX, 0.15);
+    no.ny = lerp(no.ny||finalY, finalY, 0.15);
+
+    no.el.style.left = no.nx.toFixed(2)+'px';
+    no.el.style.top  = no.ny.toFixed(2)+'px';
+    // written as a custom property, not `transform`, so the :hover scale in CSS
+    // still composes instead of being overridden by this inline style
+    no.el.style.setProperty('--warp-sc', finalSc.toFixed(4));
+  });
+}
+rafId = requestAnimationFrame(frame);
+
+// ─── LIFECYCLE ─────────────────────────────────────
+// A background tab should cost nothing. requestAnimationFrame is throttled by
+// the browser but setInterval is not, so both are stopped together and the
+// bloom clock is re-based on return to avoid one huge catch-up frame.
+let drip=null, hexTick=null;
+function startTimers(){
+  if(!drip) drip = setInterval(()=>{
+    const inc=REPOS.filter(r=>r.pct<100);
+    if(inc.length){const r=inc[ri(0,inc.length-1)];setBinPct(r.id,r.pct+rng(.06,.22));}
+  },2800);
+  if(!hexTick) hexTick = setInterval(updateHex,3200);
+}
+function stopTimers(){
+  clearInterval(drip);    drip=null;
+  clearInterval(hexTick); hexTick=null;
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    if(rafId) cancelAnimationFrame(rafId);
+    rafId=null;
+    stopTimers();
+  } else if(!rafId){
+    lastBloomTs = performance.now();
+    lastShim = lastDigit = lastBloomTs;
+    rafId = requestAnimationFrame(frame);
+    startTimers();
+  }
+});
+startTimers();
+
+// Canvas text falls back to a system mono until the webfont arrives; redrawing
+// once it is ready stops the first second of the field looking like a different
+// typeface than the rest of the page.
+if(document.fonts && document.fonts.ready){
+  document.fonts.ready.then(()=>{ blooms.forEach(b=>{ b.step=-1; }); });
+}
+
+// ─── Z-BLOOM ───────────────────────────────────────
+const BAYER = [
+   0,  8,  2, 10,
+  12,  4, 14,  6,
+   3, 11,  1,  9,
+  15,  7, 13,  5
+];
+
+let blooms = [];
+
+function mkBloom() {
+  const margin = 60;
+  const c = document.createElement('canvas');
+  const side = Math.ceil(Math.max(24, S.bloomMaxSz) * 1.8);
+  c.width = c.height = side;
+  return {
+    x:rng(margin,W-margin), y:rng(margin,H-margin),
+    digit:ri(0,9), sz:rng(6,10), phase:'grow', dissolveP:0,
+    c, x2d:c.getContext('2d', {willReadFrequently:true}),
+    side, step:-1            // step = quantised dissolve frame, -1 = nothing cached
+  };
+}
+
+function rebuildBloom() {
+  blooms = [];
+  const n = REDUCED ? Math.min(S.bloomCount, 1) : S.bloomCount;
+  for (let i=0; i<n; i++) { const b=mkBloom(); b.sz=rng(6,S.bloomMaxSz*.65); blooms.push(b); }
+}
+rebuildBloom();
+
+// The dither needs a getImageData/putImageData round trip, which is the single
+// most expensive thing on the page. During dissolve the glyph size is fixed, so
+// the result only changes when the dither threshold crosses a step — quantising
+// to DITHER_STEPS turns one readback per bloom per frame into roughly one every
+// ten, and the stipple looks the same.
+const DITHER_STEPS = 14;
+
+function drawBloom(b, dt) {
+  if (b.phase==='grow') {
+    b.sz += S.bloomSpeed * dt * S.bloomMaxSz;
+    if (b.sz >= S.bloomMaxSz) { b.sz=S.bloomMaxSz; b.phase='dissolve'; b.dissolveP=0; b.step=-1; }
+  } else {
+    b.dissolveP += S.bloomSpeed * dt * 1.4;
+    if (b.dissolveP >= 1) { Object.assign(b, mkBloom()); return; }
+  }
+
+  const sz  = Math.round(b.sz);
+  const op  = b.phase==='grow' ? clamp(b.sz/(S.bloomMaxSz*0.4),0,0.72) : 0.72;
+  const pad = Math.ceil(sz*0.35);
+  const ow  = sz+pad*2, oh=sz+pad*2;
+
+  // grow past the canvas we were given (bloom size slider moved) — re-cut it
+  if (ow > b.side) { b.side = Math.ceil(ow*1.2); b.c.width=b.c.height=b.side; b.step=-1; }
+
+  const X = b.x2d;
+  const step = b.phase==='dissolve' ? Math.floor(b.dissolveP*DITHER_STEPS) : -1;
+
+  if (b.phase!=='dissolve' || step!==b.step) {
+    b.step = step;
+    X.clearRect(0,0,b.side,b.side);
+    X.font=`${sz}px 'IBM Plex Mono'`;
+    X.textBaseline='alphabetic';
+    X.shadowColor=`rgba(82,224,238,${(op*.9).toFixed(2)})`;
+    X.shadowBlur=sz*1.1;
+    X.fillStyle=`rgba(82,224,238,${op.toFixed(3)})`;
+    X.fillText(b.digit, pad, sz+pad*.35);
+
+    if (step >= 0) {
+      const threshold = (step/DITHER_STEPS)*16;
+      const block     = Math.max(2, Math.round(sz/6));
+      const img       = X.getImageData(0,0,ow,oh);
+      const d         = img.data;
+      for (let py=0; py<oh; py++) {
+        const brow = (Math.floor(py/block)%4)*4;
+        for (let px=0; px<ow; px++) {
+          const i=(py*ow+px)*4;
+          if (d[i+3]===0) continue;
+          if (BAYER[brow+(Math.floor(px/block)%4)] < threshold) d[i+3]=0;
+        }
+      }
+      X.putImageData(img,0,0);
+    }
+  }
+
+  ctx.drawImage(b.c, 0,0, ow,oh, b.x-pad, b.y-sz-pad*.35, ow,oh);
+}
+
+let lastBloomTs=0;
+// bloom drawing called from main frame loop — no separate RAF
+function tickBlooms(ts){
+  const dt=Math.min(ts-lastBloomTs,80);
+  lastBloomTs=ts;
+  if(!blooms.length) return;
+  blooms.forEach(b=>drawBloom(b,dt));
+}
+// ─── NODE OBJECTS (RAF-driven) ──────────────────────
+const nodeObjs = [];  // { el, r, hx, hy, nx, ny, driftX, driftY, vx, vy, dx, dy }
+
+function placeNodes(){
+  document.querySelectorAll('.rnode').forEach(e=>e.remove());
+  nodeObjs.length = 0;
+  const MARGIN=20;
+  const cols=REPOS.length;
+  // shrink the nodes on a narrow viewport so five of them still fit the field
+  const fit=clamp(W/900,0.55,1);
+  REPOS.forEach((r,i)=>{
+    const sz=Math.round(r.nodeSize*fit);
+    const sw=W/cols;
+    const cx=sw*i+rng(sw*.22,sw*.78);
+    const cy=rng(H*.12,H*.7);
+    const x=clamp(cx-sz/2,MARGIN,W-sz-MARGIN);
+    const y=clamp(cy-sz/2,MARGIN,H-sz-MARGIN);
+
+    const el=document.createElement('button');
+    el.type='button';
+    el.className='rnode'; el.dataset.id=r.id;
+    el.setAttribute('aria-label',`${r.name} — open details`);
+    el.style.cssText=`left:${x}px;top:${y}px;width:${sz}px;height:${sz}px;display:${r.visible?'flex':'none'};box-shadow:0 0 14px rgba(82,224,238,.12),0 0 2px rgba(82,224,238,.3)`;
+    const fs=Math.max(6,Math.round(sz*.115));
+    const nfs=Math.max(9,Math.round(sz*.155));
+    el.innerHTML=`
+      <div class="rnode-pulse" aria-hidden="true"></div>
+      <div class="rnode-no" style="font-size:${fs}px">${r.num}</div>
+      <div class="rnode-nm" style="font-size:${nfs}px">${r.short}</div>`;
+    el.addEventListener('click',ev=>{ev.stopPropagation();openInspector(r.id);});
+    field.appendChild(el);
+
+    nodeObjs.push({
+      el, r, sz, MARGIN,
+      hx: x, hy: y,        // home (base float position)
+      nx: x, ny: y,        // current rendered position
+      driftX: rng(-.12,.12), driftY: rng(-.08,.08),
+      vx:0, vy:0,           // spring velocity (warp)
+      dx:0, dy:0,           // spring displacement (warp)
+    });
+  });
+}
+placeNodes();
+
+// Keep each node's position proportional through a resize.
+function relayoutNodes(sx,sy){
+  nodeObjs.forEach(no=>{
+    const MARGIN=no.MARGIN, sz=no.sz;
+    no.hx = clamp(no.hx*sx, MARGIN, Math.max(MARGIN, W-sz-MARGIN));
+    no.hy = clamp(no.hy*sy, MARGIN, Math.max(MARGIN, H-sz-MARGIN));
+    no.nx = no.hx; no.ny = no.hy;
+  });
+}
+
+// ─── HEX ───────────────────────────────────────────
+function updateHex(){
+  const h=()=>Math.floor(Math.random()*0xFFFFFF).toString(16).toUpperCase().padStart(6,'0');
+  document.getElementById('hex2').textContent=`0x${h()} : 0x${h()}`;
+}
+
+
+// ─── KEYBOARD ──────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  // number keys are a shortcut for the field, not for the settings sliders
+  const inPanel = settingsEl.contains(e.target);
+  const n=parseInt(e.key,10);
+  if(!inPanel && n>=1 && n<=REPOS.length) openInspector(n-1);
+  if(e.key==='Escape'){
+    if(settingsOpen){ closeSettings(); gearBtn.focus({preventScroll:true}); }
+    else closeInspector();
+  }
+});
+
+// ─── BOOT SEQUENCE ─────────────────────────────────
+(function boot(){
+  const bootEl=document.getElementById('boot');
+
+  // Someone who has asked their OS for less motion gets the page, not the show.
+  if(REDUCED){
+    bootEl.style.display='none';
+    openFromHash();
+    return;
+  }
+
+  // hide the real UI until boot completes
+  const hideIds=['hbar','arc','field','bins','hexbar'];
+  hideIds.forEach(id=>{const e=document.getElementById(id);if(e){e.style.opacity='0';e.style.transition='opacity .6s ease';}});
+
+  const lines=document.querySelectorAll('.boot-line');
+  const delays=[0, 320, 600, 860, 1100, 1380];
+  lines.forEach((l,i)=>setTimeout(()=>{
+    l.classList.add('vis');
+    beep([220,280,320,360,400,660][i],.06,.04,'sine');
+  }, delays[i]));
+
+  setTimeout(()=>{
+    bootEl.classList.add('done');
+    // reveal UI in staggered layers
+    const revealOrder=['hexbar','bins','hbar','arc','field'];
+    revealOrder.forEach((id,i)=>{
+      setTimeout(()=>{
+        const e=document.getElementById(id);
+        if(e) e.style.opacity='1';
+      }, i*120);
+    });
+    setTimeout(()=>{ bootEl.style.display='none'; openFromHash(); }, 700);
+  }, 2100);
+})();
+
+// ─── FLICKER ───────────────────────────────────────
+(function schedFlicker(){
+  if(REDUCED) return;
+  setTimeout(()=>{
+    document.body.style.animation='flicker .2s ease';
+    setTimeout(()=>{document.body.style.animation='';schedFlicker();},250);
+  },rng(38000,70000));
+})();
+</script>
+</body>
+</html>
