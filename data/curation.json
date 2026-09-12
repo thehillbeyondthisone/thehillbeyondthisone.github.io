@@ -1,0 +1,109 @@
+{
+  "owner": "thehillbeyondthisone",
+  "featured": [
+    "GolfProbably",
+    "Kinwild",
+    "RubiKit",
+    "Hydra"
+  ],
+  "exclude": [
+    "thehillbeyondthisone.github.io",
+    "thehillbeyondthisone"
+  ],
+  "audio": null,
+  "projects": {
+    "GolfProbably": {
+      "title": "Golf, Probably",
+      "category": "Games",
+      "summary": "Nine little golf holes with a very loose understanding of the rules.",
+      "description": "A comedy browser golf game built with React, TypeScript, and Three.js. Nine curated holes turn familiar mini golf into a series of playful surprises.",
+      "demo": "https://thehillbeyondthisone.github.io/GolfProbably/",
+      "embed": true,
+      "image": "https://raw.githubusercontent.com/thehillbeyondthisone/GolfProbably/master/screenshots/hole1-gameplay.png",
+      "imageAlt": "Existing screenshot of the first hole in Golf, Probably"
+    },
+    "Kinwild": {
+      "title": "Kinwild · Creature Creator",
+      "category": "Little worlds",
+      "summary": "Procedural creatures with their own shapes, personalities, and ways of moving.",
+      "description": "A creature creator with smoothly blended bodies and procedural walking, hopping, flying, and wiggling. Creature designs can be imported, exported, and shared as data. Optional natural-language authoring uses a locally running model."
+    },
+    "kinwild-world": {
+      "title": "Kinwild · Living World",
+      "category": "Little worlds",
+      "summary": "A living miniature world of generated plants and curious creatures.",
+      "description": "An integrated procedural world with reactive flora, articulated creatures, terrain-aware movement, and reproducible seeds. The creature studio also offers procedural studies when a local language model is unavailable.",
+      "demo": "https://thehillbeyondthisone.github.io/kinwild-world/",
+      "embed": true
+    },
+    "RubiKit": {
+      "title": "RubiKit",
+      "category": "Tools",
+      "summary": "A modular toolkit and real-time dashboards for Anarchy Online.",
+      "description": "An AOSharp plugin connecting in-game information to local HTTP and server-sent-event dashboards, including NotumHUD. The full toolkit runs with a local Anarchy Online client.",
+      "requirement": "Requires Anarchy Online and a local plugin."
+    },
+    "Hydra": {
+      "title": "Hydra",
+      "category": "Tools",
+      "summary": "Many listening posts. One clear view of what's happening.",
+      "description": "A multi-sensor log monitor for Anarchy Online. Hydra combines live local logs with channel filters, text and regex search, alerts, and saved file handles.",
+      "requirement": "Live monitoring uses local log files in a supported desktop browser."
+    },
+    "artpipeline": {
+      "title": "artpipeline",
+      "category": "Creative tools",
+      "summary": "One illustration in. A transparent, looping game sprite out.",
+      "description": "A local ComfyUI animation pipeline with background removal, frame stabilization, seamless-loop processing, sprite-sheet export, and quality checks.",
+      "image": "https://raw.githubusercontent.com/thehillbeyondthisone/artpipeline/main/docs/images/loops.gif",
+      "imageAlt": "Existing artpipeline examples: a fox walking, deer running, and sheep shaking",
+      "requirement": "The generation pipeline runs locally with ComfyUI."
+    },
+    "WhatIfWe": {
+      "title": "What if we…",
+      "category": "Tools",
+      "summary": "A shared place to plan dates and find ideas you both love.",
+      "requirement": "The complete app uses a local Node server."
+    },
+    "WoobleTracker": {
+      "title": "Woobles Tracker",
+      "category": "Tools",
+      "summary": "A small home for craft projects, progress, photos, and notes."
+    },
+    "PastMidnight": {
+      "title": "Past Midnight",
+      "category": "Experiments",
+      "summary": "A love letter to the screensavers that kept old computers company."
+    },
+    "CathedralSoftware": {
+      "title": "Cathedral Software",
+      "category": "Experiments",
+      "summary": "A retro interface tribute to the 1990s film The Net."
+    },
+    "Xanalytics": {
+      "title": "Xanalytics",
+      "category": "Tools",
+      "summary": "Turn local game logs into useful loot and experience metrics."
+    },
+    "ZeroIn": {
+      "title": "ZeroIn",
+      "category": "Tools",
+      "summary": "An Anarchy Online plugin for in-game scanning and radar overlays."
+    },
+    "redesigned-octo-couscous": {
+      "title": "Spanish Ghost Text",
+      "category": "Experiments",
+      "summary": "A local speech transcription and Spanish text-assistance experiment."
+    },
+    "easy_steam_license_remover": {
+      "title": "Steam License Remover",
+      "category": "Utilities",
+      "summary": "An interactive utility for managing free Steam licenses."
+    },
+    "Sketchbook": {
+      "title": "Sketchbook",
+      "category": "Forks",
+      "summary": "A fork of swift502's Three.js playground for characters and vehicles."
+    }
+  }
+}
