@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#101c30">
+<meta name="theme-color" content="#15232c">
 <title>Yellow Umbrella Observatory · Projects & experiments</title>
 <meta name="description" content="Explore games, creative tools, and little worlds by Yellow Umbrella Group. A quiet observatory with an always-open project catalog.">
 <link rel="canonical" href="https://thehillbeyondthisone.github.io/">
@@ -21,29 +21,50 @@
 <meta name="twitter:image" content="https://thehillbeyondthisone.github.io/og.png">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="assets/scene/night.webp" fetchpriority="high">
 </head>
 <body>
-<a class="skip" href="#projects">Skip to projects</a>
-<header class="topbar">
-<a class="brand" href="./" aria-label="Yellow Umbrella Observatory home">
-<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 13A10 10 0 0 1 22 13Q19.5 11 17 13Q14.5 11 12 13Q9.5 11 7 13Q4.5 11 2 13Z" fill="#ffc61a"/><path d="M12 13V19.5a2 2 0 0 1-4 0" fill="none" stroke="#ffc61a" stroke-width="1.6" stroke-linecap="round"/></svg>
-<span>Yellow Umbrella<small>The observatory</small></span></a>
-<nav class="toplinks" aria-label="Studio"><a href="https://github.com/thehillbeyondthisone" class="github-link" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://yellowumbrella.group" target="_blank" rel="noopener noreferrer">Visit the studio ↗</a><a class="contact" href="mailto:yellowumbrellagroup@gmail.com">Start a project</a></nav>
-</header>
-<main class="shell">
-<section class="world" aria-label="Interactive observatory">
-<div class="world-head"><p class="eyebrow">An open studio by thehillbeyondthisone</p><h1>Games. Tools.<br>Little worlds.</h1><p>Take a look around. Stay a little while.</p></div>
-<canvas id="world-canvas" aria-hidden="true"></canvas>
-<p class="world-status" id="world-status">The project collection is open below.</p>
-<div class="scene-tools" aria-label="Observatory controls"><button id="telescope" type="button" aria-pressed="false" disabled>✧ Telescope</button><button id="radio" type="button" aria-pressed="false">♫ Radio off</button><button id="lamp" type="button" aria-pressed="true" disabled>☼ Warm lights</button></div>
-<div class="world-foot"><span>No rush. Everything is already open.</span><button id="motion" type="button" aria-pressed="false">Pause motion</button></div>
+<svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5v15M12 6C8 3 4 4 2 5v14c4-2 7-1 10 1 3-2 6-3 10-1V5c-3-1-6-2-10 1Z"/></symbol>
+<symbol id="i-radio" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="3"/><path d="m6 7 11-5M6 12h7m-7 3h7m-7 3h7"/><circle cx="17" cy="13" r="1"/><path d="M17 17v1"/></symbol>
+<symbol id="i-sky" viewBox="0 0 24 24"><path d="m13 3 2.3 6.7L22 12l-6.7 2.3L13 21l-2.3-6.7L4 12l6.7-2.3L13 3Zm-9-1v4M2 4h4"/></symbol>
+<symbol id="i-time" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M6 18 18 6M6 6h12v12"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="m10 5-7 7 7 7M3 12h18"/></symbol>
+</defs></svg>
+<a class="skip" href="#fallback-list" data-journal>Skip to projects</a>
+<main>
+<section class="scene" id="scene" aria-label="A solitary hilltop observatory at dusk">
+  <div class="scene-surround" aria-hidden="true"><div class="surround-night"></div><div class="surround-day"></div></div>
+  <div class="art-plane" id="art-plane">
+    <img class="scene-image night-image" id="night-image" src="assets/scene/night.webp" width="1698" height="926" alt="A small copper-domed observatory above an empty wooded valley. Warm windows light a stone terrace with a bench, bicycle, and radio." fetchpriority="high">
+    <img class="scene-image day-image" id="day-image" src="assets/scene/day.webp" width="1698" height="926" alt="" aria-hidden="true" decoding="async">
+    <div class="twilight-wash" aria-hidden="true"></div>
+    <canvas id="ambience" aria-hidden="true"></canvas>
+    <button class="hotspot telescope-spot enhanced-control" data-sky aria-label="Look through the telescope"><span class="spot-dot"></span><span class="spot-label">Look through</span></button>
+    <button class="hotspot journal-spot enhanced-control" data-journal aria-label="Open the project journal"><span class="spot-dot"></span><span class="spot-label">Project journal</span></button>
+    <button class="hotspot radio-spot enhanced-control" data-radio aria-label="Turn radio on" aria-pressed="false"><span class="spot-dot"></span><span class="spot-label">Radio</span><span class="music-notes" aria-hidden="true"><i>♪</i><i>♫</i><i>♪</i></span></button>
+  </div>
+  <div class="scene-shade" aria-hidden="true"></div>
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="Yellow Umbrella home"><img src="assets/favicon.svg" width="26" height="26" alt=""><span>Yellow Umbrella<small>Independent projects & experiments</small></span></a>
+    <nav aria-label="Studio"><a class="github-link" href="https://github.com/thehillbeyondthisone" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://yellowumbrella.group" target="_blank" rel="noopener noreferrer">The studio ↗</a></nav>
+  </header>
+  <div class="scene-caption"><p class="eyebrow">THEHILLBEYONDTHISONE</p><h1>The observatory</h1><p>A collection of games, tools, and small experiments.</p></div>
+  <div class="scene-footer">
+    <button class="phase-link enhanced-control" id="phase-link" data-time><span class="phase-dot"></span><span id="phase-label">Dusk</span><span class="phase-state" id="phase-state">Time is passing</span></button>
+    <nav class="dock" aria-label="Observatory controls">
+      <a class="journal-launch" href="#fallback-list" data-journal><svg class="icon"><use href="#i-book"/></svg><span>Project journal<small id="featured-count">4 selected projects</small></span><span class="launch-arrow">↗</span></a>
+      <button class="dock-button enhanced-control" data-radio aria-pressed="false" aria-label="Turn radio on"><svg class="icon"><use href="#i-radio"/></svg><span id="radio-label">Radio off</span></button>
+      <button class="dock-button enhanced-control" data-sky aria-label="Look through the telescope"><svg class="icon"><use href="#i-sky"/></svg><span>Telescope</span></button>
+      <button class="dock-button enhanced-control" data-time aria-label="Change or pause time"><svg class="icon"><use href="#i-time"/></svg><span>Time</span></button>
+    </nav>
+    <a class="contact-link" href="mailto:yellowumbrellagroup@gmail.com">Get in touch ↗</a>
+  </div>
+  <p class="scene-error" id="scene-error" role="status" hidden></p>
 </section>
-<section class="catalog" id="projects" tabindex="-1" aria-labelledby="projects-title">
-<div class="catalog-heading"><h2 id="projects-title">The collection</h2><span id="catalog-count">Selected projects</span></div>
-<div class="filters" id="filters" aria-label="Project collection" hidden><button type="button" id="show-featured" aria-pressed="true">Favorites</button><button type="button" id="show-all" aria-pressed="false">All projects</button></div>
-<div class="project-list" id="project-list"></div>
+<section class="static-collection" id="static-collection" aria-label="Project collection"><h2>Project journal</h2><p>Explore the source and documentation for every project.</p>
 <div class="fallback-list" id="fallback-list"><!-- FALLBACK_PROJECTS -->
 <a href="https://github.com/thehillbeyondthisone/artpipeline" target="_blank" rel="noopener noreferrer">artpipeline<small>One illustration in. A transparent, looping game sprite out.</small></a>
 <a href="https://github.com/thehillbeyondthisone/CathedralSoftware" target="_blank" rel="noopener noreferrer">Cathedral Software<small>A retro interface tribute to the 1990s film The Net.</small></a>
@@ -62,20 +83,42 @@
 <a href="https://github.com/thehillbeyondthisone/ZeroIn" target="_blank" rel="noopener noreferrer">ZeroIn<small>An Anarchy Online plugin for in-game scanning and radar overlays.</small></a>
 <!-- END_FALLBACK_PROJECTS --></div>
 <noscript><p>You can visit every project using the links above. Interactive previews require JavaScript.</p></noscript>
-<footer class="catalog-footer"><a href="https://yellowumbrella.group" target="_blank" rel="noopener noreferrer">Have something in mind? Let's make it. ↗</a><p id="updated">An open collection of projects and experiments.</p></footer>
 </section>
 </main>
-<dialog class="project-dialog" id="project-dialog" aria-labelledby="detail-title">
-<div class="dialog-head"><span>From the collection</span><button class="icon-button" id="close-detail" type="button" aria-label="Close project">×</button></div>
-<div class="dialog-body"><p class="eyebrow" id="detail-category"></p><h2 id="detail-title"></h2><p class="dialog-description" id="detail-description"></p><div id="detail-media"></div><div class="detail-meta" id="detail-meta"></div><p class="requirement" id="detail-requirement" hidden></p><div class="dialog-actions" id="detail-actions"></div></div>
+<dialog class="journal" id="journal" aria-labelledby="journal-title">
+  <header class="journal-top"><span class="eyebrow">YELLOW UMBRELLA · SELECTED WORK</span><button class="icon-button" data-close="journal" aria-label="Close journal"><svg class="icon"><use href="#i-close"/></svg></button></header>
+  <div class="journal-scroll" id="journal-scroll">
+    <section id="collection-view">
+      <h2 id="journal-title" tabindex="-1">Project journal</h2><p class="journal-intro">Things I've built. Some useful, some playful.</p>
+      <div class="journal-filters" aria-label="Project selection"><button id="show-featured" aria-pressed="true">Favorites <span id="favorite-total">4</span></button><button id="show-all" aria-pressed="false">All projects <span id="all-total">15</span></button></div>
+      <label class="search-label" for="project-search">Find a project<input id="project-search" type="search" placeholder="Search the journal…" autocomplete="off"></label>
+      <p class="result-count" id="catalog-count" role="status"></p><div id="project-list" class="project-list"></div><p id="no-results" hidden>No projects match that search.</p>
+      <footer class="journal-footer"><a href="https://github.com/thehillbeyondthisone" target="_blank" rel="noopener noreferrer">More on GitHub ↗</a><p id="updated"></p></footer>
+    </section>
+    <section id="detail-view" hidden>
+      <button class="text-button" id="back-collection"><svg class="icon"><use href="#i-back"/></svg>All journal entries</button>
+      <p class="eyebrow" id="detail-category"></p><h2 id="detail-title" tabindex="-1"></h2><p id="detail-description" class="detail-description"></p><div id="detail-media"></div><div id="detail-meta" class="detail-meta"></div><p id="detail-requirement" class="requirement" hidden></p><div id="detail-actions" class="detail-actions"></div>
+    </section>
+  </div>
 </dialog>
-<section class="viewer" id="viewer" aria-label="Project viewer" hidden>
-<nav class="viewer-bar" aria-label="Return and project controls"><button type="button" id="back-world"><strong>☂</strong>Back</button><span class="viewer-label" id="viewer-title"></span><button type="button" id="switch-project"><strong>▤</strong>Projects</button><a id="external-demo" target="_blank" rel="noopener noreferrer"><strong>↗</strong>New tab</a></nav>
-<div class="viewer-stage"><iframe id="demo-frame" title="Project demo" allow="fullscreen; gamepad" referrerpolicy="strict-origin-when-cross-origin"></iframe><p class="viewer-help" id="viewer-help">If the project doesn't load here, use <strong>New tab</strong>.</p></div>
-</section>
+<dialog class="time-dialog small-dialog" id="time-dialog" aria-labelledby="time-title">
+  <header class="small-top"><span class="eyebrow">THE LIGHT OUTSIDE</span><button class="icon-button" data-close="time-dialog" aria-label="Close time controls"><svg class="icon"><use href="#i-close"/></svg></button></header>
+  <h2 id="time-title">Stay a little longer.</h2><p>A day passes slowly here. Keep your favorite light, or let it wander.</p>
+  <label class="time-range-label" for="time-range">Time of day <output id="time-output" for="time-range">Dusk</output></label><input type="range" id="time-range" min="0" max="1000" value="790" aria-valuetext="Dusk">
+  <div class="phase-presets" aria-label="Choose the light"><button data-phase="0.23">Dawn</button><button data-phase="0.5">Day</button><button data-phase="0.79">Dusk</button><button data-phase="0">Night</button></div>
+  <button class="primary wide" id="pause-time" aria-pressed="false">Pause time</button><p class="fine-print" id="motion-explanation">One gentle cycle takes about 20 minutes.</p>
+</dialog>
+<dialog class="sky-dialog" id="sky-dialog" aria-labelledby="sky-title">
+  <header class="sky-top"><div><p class="eyebrow">THROUGH THE TELESCOPE</p><h2 id="sky-title">A small, imagined sky.</h2></div><button class="icon-button" data-close="sky-dialog" aria-label="Return to the observatory"><svg class="icon"><use href="#i-close"/></svg></button></header>
+  <div class="eyepiece" id="eyepiece"><canvas id="sky-canvas" tabindex="0" role="img" aria-label="An imagined star field. Drag gently or use the arrow keys to look around. Press Enter to see a shooting star."></canvas><span class="scope-reticle" aria-hidden="true"></span></div>
+  <p class="sky-hint">Drag gently to look around. Tap to see a shooting star.<span>Keyboard: arrows to look, Enter for a star, Escape to return.</span></p>
+</dialog>
+<dialog class="viewer" id="viewer" aria-labelledby="viewer-title">
+  <nav class="viewer-bar" aria-label="Return and project controls"><button id="back-world"><svg class="icon"><use href="#i-back"/></svg><span>Observatory</span></button><span class="viewer-label" id="viewer-title"></span><button id="switch-project"><svg class="icon"><use href="#i-book"/></svg><span>Journal</span></button><a id="external-demo" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="#i-arrow"/></svg><span>New tab</span></a></nav>
+  <div class="viewer-stage"><iframe id="demo-frame" title="Project demo" allow="fullscreen; gamepad" referrerpolicy="strict-origin-when-cross-origin"></iframe><p id="viewer-help" class="viewer-help" hidden>Taking a while? Try <a id="viewer-fallback" target="_blank" rel="noopener noreferrer">opening this project in a new tab ↗</a><button id="dismiss-help" aria-label="Dismiss loading help">×</button></p></div>
+</dialog>
 <p class="toast" role="status" aria-live="polite" id="toast" hidden></p>
 <script src="data/catalog.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
 <script type="module" src="assets/app.js"></script>
 </body>
 </html>
