@@ -1,5 +1,5 @@
 window.OBSERVATORY_DATA = {
-  "generatedAt": "2026-09-11T23:49:29.051Z",
+  "generatedAt": "2026-09-12T02:08:53.928Z",
   "featured": [
     "GolfProbably",
     "Kinwild",
@@ -93,8 +93,8 @@ window.OBSERVATORY_DATA = {
       "fork": false,
       "archived": false,
       "updated": "2026-09-11T21:17:32Z",
-      "demo": null,
-      "embed": false,
+      "demo": "https://thehillbeyondthisone.github.io/kinwild-world/",
+      "embed": true,
       "image": null,
       "imageAlt": null
     },

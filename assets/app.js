@@ -60,9 +60,10 @@ function renderProjects() {
     content.append(element('span', project.summary || 'Source and documentation on GitHub.', 'entry-summary'));
     const meta = [project.category, project.demo ? 'Live project' : project.language, project.fork ? 'Fork' : '', project.archived ? 'Archived' : ''].filter(Boolean);
     content.append(element('span', meta.join(' · '), 'entry-meta'));
-    const arrow = element('span', '↗', 'entry-arrow');
+    const arrow = element('span', 'Read entry →', 'entry-arrow');
     arrow.setAttribute('aria-hidden', 'true');
-    button.append(number, content, arrow);
+    const art = projectArt(project);
+    button.append(art, number, content, arrow);
     button.addEventListener('click', () => showProject(project, button));
     fragment.append(button);
   });
@@ -101,6 +102,7 @@ function showProject(project, opener) {
   }
   $('detail-meta').replaceChildren(...meta.map(text => element('span', text)));
   $('detail-media').replaceChildren();
+  if (!safeHTTPS(project.image)) $('detail-media').append(projectArt(project));
   const imageURL = safeHTTPS(project.image);
   if (imageURL) {
     if (preference.matches && /\.gif(?:\?|$)/i.test(imageURL)) {
@@ -127,6 +129,10 @@ function showProject(project, opener) {
     }
     actions.append(externalLink('Open project in a new tab ↗', demo, project.embed ? 'secondary' : 'primary'));
   }
+  const notes = element('section', '', 'entry-notes');
+  notes.append(element('h3', 'Inside this project'), element('p', project.summary));
+  notes.append(element('h3', project.demo ? 'Try it' : 'From the workshop'), element('p', project.requirement || (project.demo ? 'Open the live project here, or give it a tab of its own.' : 'Visit the repository for setup instructions, source code, and project documentation.')));
+  $('detail-media').append(notes);
   const source = safeHTTPS(project.url);
   if (source) actions.append(externalLink('Source & README ↗', source, 'secondary'));
   $('collection-view').hidden = true;
@@ -203,7 +209,7 @@ async function toggleRadio() {
 function init() {
   if (!data || !Array.isArray(data.projects) || !data.projects.length || !Array.isArray(data.featured)) return;
   if (typeof $('journal').showModal !== 'function') return;
-  renderProjects();
+  renderProjects(); renderConstellations();
   $('favorite-total').textContent = String(data.featured.length);
   $('all-total').textContent = String(data.projects.length);
   $('featured-count').textContent = `${data.featured.length} selected projects`;
@@ -214,7 +220,7 @@ function init() {
   document.querySelectorAll('[data-time]').forEach(button => button.addEventListener('click', () => openDialog('time-dialog')));
   document.querySelectorAll('[data-sky]').forEach(button => button.addEventListener('click', () => {
     if (!sky) { notify('The telescope is resting. The journal is still open to explore.'); return; }
-    openDialog('sky-dialog'); $('sky-canvas').focus();
+    openDialog('sky-dialog'); $('constellations').querySelector('button')?.focus();
   }));
   document.querySelectorAll('[data-radio]').forEach(button => button.addEventListener('click', toggleRadio));
   document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => $(button.dataset.close).close()));
@@ -262,4 +268,49 @@ function init() {
   try { sky = createSky($('sky-canvas')); sky?.setMotion(!preference.matches && !scene?.paused); } catch { sky = null; }
 }
 
+const shapes = {
+  Hydra: [[8,65],[27,48],[44,60],[61,39],[79,52],[92,25]],
+  RubiKit: [[12,25],[44,12],[82,33],[72,74],[37,86],[12,25],[72,74],[44,12]],
+  GolfProbably: [[12,76],[33,64],[56,72],[72,43],[72,14],[92,23],[72,32]],
+  Kinwild: [[8,56],[29,39],[45,48],[60,27],[79,39],[91,22],[79,66],[51,78],[29,64],[8,56]]
+};
+function projectArt(project) {
+  const art = element('span', '', 'project-art art-' + project.name.toLowerCase());
+  art.setAttribute('aria-hidden', 'true');
+  if (project.image && !/\.gif(?:\?|$)/i.test(project.image)) {
+    const img = document.createElement('img'); img.src = safeHTTPS(project.image); img.alt = ''; img.loading = 'lazy';
+    img.addEventListener('error', () => img.remove(), {once:true}); art.append(img);
+  }
+  const symbol = element('span', ({Kinwild:'❧','kinwild-world':'❧',GolfProbably:'⚑',Hydra:'⌁',RubiKit:'◇'})[project.name] || '✧', 'art-symbol');
+  art.append(symbol, element('span', project.category || 'Workshop', 'art-caption'));
+  return art;
+}
+function renderConstellations() {
+  const projects = data.featured.map(name => data.projects.find(p => p.name === name)).filter(Boolean);
+  const host = $('constellations');
+  projects.forEach((project, i) => {
+    const button = element('button', '', 'constellation'); button.type = 'button';
+    button.setAttribute('aria-label', 'View ' + project.title + ' constellation');
+    button.setAttribute('aria-pressed', 'false');
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg'); svg.setAttribute('viewBox','0 0 100 100'); svg.setAttribute('aria-hidden','true');
+    const points = shapes[project.name] || shapes.RubiKit;
+    const line = document.createElementNS(ns,'polyline'); line.setAttribute('points',points.map(p=>p.join(',')).join(' ')); svg.append(line);
+    points.forEach(([x,y],n)=> {const star=document.createElementNS(ns,'circle');star.setAttribute('cx',x);star.setAttribute('cy',y);star.setAttribute('r',n===2?'2.5':'1.6');svg.append(star);});
+    button.append(svg, element('span',project.title,'constellation-title'),element('small','0'+(i+1)+' / '+project.category));
+    button.addEventListener('click',()=>selectStar(project,button)); host.append(button);
+  });
+  if(projects.length) selectStar(projects[0],host.firstElementChild);
+}
+function selectStar(project,button) {
+  $('constellations').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+  const panel=$('star-detail');panel.replaceChildren();
+  panel.append(element('p','PINNED ON GITHUB','eyebrow'),element('h3',project.title),element('p',project.description || project.summary,'star-description'));
+  panel.append(element('p',[project.category,project.language].filter(Boolean).join(' · '),'star-meta'));
+  if(safeHTTPS(project.demo)) panel.append(externalLink('Open live project ↗',project.demo,'primary'));
+  const journal=element('button','Read journal entry →','secondary');journal.addEventListener('click',()=>{openDialog('journal');showProject(project,null);});panel.append(journal);
+  if(safeHTTPS(project.url))panel.append(externalLink('View repository ↗',project.url,'star-source'));
+}
+
 init();
+

@@ -241,3 +241,65 @@ dialog::backdrop { background: #07141973; }
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
   .music-notes i { animation: none; opacity: .7; }
 }
+/* Observatory field guide and constellation atlas. */
+.hotspot { width:72px; height:72px; border:1px solid #f2d8a17a; background:#17263345; box-shadow:0 0 0 7px #14232b30; }
+.spot-dot { width:10px;height:10px;box-shadow:0 0 18px #ffdc8f; }
+.spot-label { opacity:1;top:76px;font-size:14px;padding:9px 13px;background:#11212aed;box-shadow:0 3px 14px #0004; }
+.hotspot:hover,.hotspot:focus-visible { background:#f3d29830;box-shadow:0 0 0 10px #eac67d20; }
+.journal-spot .spot-label,.radio-spot .spot-label { top:auto;bottom:78px; }
+.dock-button { font-size:12px; }
+.journal-launch small {font-size:12px}
+.journal {width:min(1000px,calc(100vw - 64px));inset:32px 32px 32px auto;height:calc(100svh - 64px);max-height:calc(100svh - 64px);}
+.journal-scroll {padding:32px 40px 40px;background:linear-gradient(90deg,#d4ccbb40 1px,transparent 1px) 20px 0/100% 100%;}
+.journal h2 {font-size:46px;}
+.journal-intro {font-size:17px;margin-bottom:20px;}
+.journal-top .eyebrow,.eyebrow {font-size:12px;}
+.journal-filters button,.search-label,.result-count,.entry-meta,.journal-footer,.detail-meta,.text-button {font-size:14px;}
+.journal-filters span {font-size:12px;}
+.search-label input {font-size:16px;}
+.project-list {display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px;}
+.project-entry {position:relative;display:grid;grid-template-columns:26px 1fr;padding:0 0 20px;gap:12px;border:1px solid #b7b09e;background:#f7f2e7;border-radius:6px;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.project-entry:hover {transform:translateY(-3px);box-shadow:0 9px 20px #3d352414;}
+.project-art {position:relative;display:flex;grid-column:1/-1;height:170px;width:100%;overflow:hidden;align-items:center;justify-content:center;background:radial-gradient(ellipse at 65% 30%,#657575,#162e38);color:#ead8ac;}
+.project-art::after {content:'';position:absolute;inset:12px;border:1px solid #f4e7c12b;pointer-events:none;}
+.project-art img {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;}
+.art-symbol {font:100px Georgia;line-height:1;transform:rotate(-12deg);opacity:.85;}
+.art-caption {position:absolute;bottom:18px;left:22px;font-size:12px;letter-spacing:.13em;text-transform:uppercase;}
+.art-kinwild,.art-kinwild-world {background:radial-gradient(ellipse at 60% 20%,#afbc82,#294c48 80%);}
+.art-hydra {background:repeating-radial-gradient(ellipse at 70% 100%,transparent 0 25px,#e7c88b25 26px 27px),linear-gradient(130deg,#142735,#456e7b);}
+.art-rubikit {background:linear-gradient(35deg,#332f4a,#967e8c);}
+.entry-number {padding-left:14px;font-size:12px;}
+.entry-content {padding:0 20px 0 0;}
+.entry-title {font-size:27px;}
+.entry-summary {font-size:16px;line-height:1.55;}
+.entry-arrow {grid-column:2;font:14px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#45583e;}
+#detail-view {max-width:740px;margin:auto;}
+#detail-media > .project-art {height:240px;border-radius:4px;}
+.entry-notes {display:grid;grid-template-columns:150px 1fr;gap:16px 24px;border-top:1px solid #b7b09e;margin-top:24px;padding-top:24px;}
+.entry-notes h3 {font:20px Georgia;margin:0;}
+.entry-notes p {font-size:16px;line-height:1.65;margin:0;}
+.detail-description {font-size:21px;}.requirement,.primary,.secondary {font-size:16px;}
+.detail-actions {flex-direction:row;flex-wrap:wrap;}.detail-actions > * {flex:1;}
+.sky-dialog[open] {gap:20px;justify-content:flex-start;background:radial-gradient(ellipse at 35% 55%,#173047,#07121e 75%);}
+.sky-top {max-width:1280px;align-items:center;}.sky-top h2 {font-size:36px;}.sky-top .eyebrow {font-size:12px;}
+.star-atlas {display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:36px;width:100%;max-width:1280px;flex:1;min-height:420px;align-items:center;}
+.atlas-field {position:relative;min-width:0;height:100%;min-height:420px;border:1px solid #aec6d226;border-radius:50% 50% 8px 8px;overflow:hidden;}
+#sky-canvas {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.constellations {position:relative;display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:36px 28px;min-height:100%;align-content:center;}
+.constellation {min-width:0;background:transparent;color:#a9bccb;display:flex;flex-direction:column;align-items:center;border-radius:12px;padding:14px;border:1px solid transparent;transition:background .2s,color .2s;}
+.constellation:hover,.constellation[aria-pressed=true] {background:#d4e4f010;color:#ffe2a1;border-color:#e4c8894a;}
+.constellation svg {width:100%;max-width:190px;height:150px;overflow:visible;filter:drop-shadow(0 0 5px #b4dafa55);}
+.constellation polyline {fill:none;stroke:currentColor;stroke-width:.65;opacity:.65;}
+.constellation circle {fill:currentColor;}
+.constellation-title {font:22px Georgia;margin:8px 0;}.constellation small {font-size:12px;opacity:.65;}
+.star-detail {padding:24px 0;}.star-detail h3 {font:40px/1.1 Georgia;margin:16px 0 24px;letter-spacing:-.03em;}.star-description {font-size:17px;line-height:1.75;color:#bfccd6;}.star-meta {font-size:14px;color:#96a9b9;margin:24px 0;}
+.star-detail .primary,.star-detail .secondary {display:flex;width:100%;margin:12px 0;}.star-detail .primary {background:#ead6a5;color:#182a35;border-color:#ead6a5;}.star-detail .secondary {color:#e3d9bf;border-color:#6a7c89;}.star-source {display:inline-block;font-size:14px;padding:14px 0;color:#b4c3cf;}.sky-hint {font-size:14px;margin:0;}
+@media(max-width:700px){
+ .hotspot{width:48px;height:48px;}.spot-label{font-size:12px;top:51px;padding:7px 9px;}.journal-spot .spot-label,.radio-spot .spot-label{bottom:51px;}
+ .journal{inset:12px 0 0;width:100vw;max-width:100vw;height:calc(100svh - 12px);max-height:calc(100svh - 12px);}.journal-scroll{padding:24px;}.journal h2{font-size:36px;}.project-list{grid-template-columns:1fr;}.project-art{height:180px;}.entry-notes{grid-template-columns:1fr;gap:12px;}.entry-notes p{margin-bottom:14px;}
+ .sky-dialog{padding:20px 18px;}.sky-top h2{font-size:28px;}.star-atlas{grid-template-columns:1fr;gap:4px;}.atlas-field{min-height:380px;}.constellations{gap:4px;padding:24px 10px;}.constellation{padding:10px 4px;}.constellation svg{height:100px;}.constellation-title{font-size:18px;}.star-detail{padding:10px 8px;}.star-detail h3{font-size:32px;margin:10px 0;}.sky-hint{padding-bottom:20px;}.detail-actions{flex-direction:column;}
+}
+@media(max-height:540px) and (min-aspect-ratio:11/10){.sky-dialog[open]{flex-direction:column;}.sky-top{max-width:1280px;}.star-atlas{min-height:400px;}.sky-hint{display:block;}}
+.radio-spot .spot-label { right:0; }
+.spot-label { pointer-events:auto; } @media(max-width:700px){.telescope-spot .spot-label{left:0;}}
+@media(max-width:700px){.star-atlas{display:block;flex:none;min-height:0;}.atlas-field{height:440px;min-height:440px;}.constellations{height:100%;min-height:0;}.sky-hint{flex-shrink:0;}}
