@@ -12,3 +12,8 @@
 - Pause rendering when hidden, offscreen, or viewing a demo. Reduced motion needs static rendering on interaction, not merely slower animation.
 - Successful syntax tests and HTTP responses do not establish visual, embedding, audio, or mobile usability. Verify those separately before release.
 - The github.io portfolio and yellowumbrella.group business site are separate deployment targets. Keep their source and rollback paths distinct.
+- Approve art direction before implementation. More procedural geometry does not compensate for an unreviewed composition.
+- Use the accepted image as the scene foundation. Preserve its compact architecture, muted materials and solitude through later lighting edits.
+- A daylight endpoint needs different illumination and unlit windows, not just a brightness filter over night. Inspect intermediate blends for geometry drift.
+- Check portrait hotspot bounds independently of desktop framing; essential controls must remain directly available outside the image.
+- Name verification limits accurately. A passing build and a generated concept image are not evidence of a finished interactive mobile experience.

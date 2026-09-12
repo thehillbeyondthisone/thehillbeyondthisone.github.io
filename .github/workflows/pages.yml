@@ -29,7 +29,9 @@ jobs:
         run: |
           node --check assets/app.js
           node --check assets/world.js
-          node --test tests/catalog.test.mjs
+          node --check assets/sky.js
+          node --test tests/*.test.mjs
+          node scripts/check-site.mjs
       - name: Refresh public repository snapshot
         if: github.event_name != 'pull_request'
         env:

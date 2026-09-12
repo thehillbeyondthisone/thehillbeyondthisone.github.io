@@ -1,70 +1,62 @@
 # Yellow Umbrella Observatory
 
-A quiet, optional-play portfolio for games, tools, and little worlds. The project collection is accessible without interacting with the 3D scene. No scores, unlocks, or required navigation through a game.
+A solitary observatory, a slowly changing sky, and a journal of games, tools, and experiments. The landscape is optional play; every project is one journal button away.
 
-## How it works
+## The experience
 
-- A fixed-camera terrace has a telescope, radio, warm lights, umbrella, and reusable project board.
-- Favorites are visible alongside the scene on desktop and below it on phones. All projects opens the public catalog.
-- A project opens a readable inspector with description, source, and existing media when available.
-- Two existing demos offer **Explore here** with a persistent return bar, or **Open project in new tab**. The return bar moves to the bottom on mobile.
-- HTML project links remain available without JavaScript. WebGL failure keeps the collection usable. Reduced motion and Pause motion stop the ambient animation.
+The approved compact observatory artwork fills the scene. Desktop has a paper-toned journal on the right when opened; phones frame the tower and radio with the journal in a bottom sheet. The journal shows curated favorites and a searchable public catalog. Project entries have descriptions, source links, local requirements, and existing media when available.
 
-The site is plain HTML, CSS, and JavaScript. Three.js r128 is loaded from cdnjs, matching the existing Yellow Umbrella site; fonts come from Google Fonts. There is no app server, package installation, or browser-side GitHub token. Source files live in `assets/`; the scene is independent of project data.
+The 20-minute day–night cycle starts near dusk. Use Time to pause, hold dawn/day/dusk/night, or choose any point in between. Time holds while inspecting a project, looking through the telescope, viewing a demo, or leaving the tab. Reduced motion starts still, with an explicit option to resume. The telescope opens an imagined star field with optional drag, keyboard, and shooting-star interactions.
 
-## Local use
+The radio starts silent and awaits your recording. Notes appear only while audio is actually playing. A scene hotspot and visible dock control are provided for the journal, radio, and telescope; nothing requires discovering a hidden interaction.
 
-Node 22 or newer is needed only for maintenance/build commands. Serve the project over HTTP; JavaScript modules do not work reliably by opening the HTML as a file.
+Existing demos can open in a new tab or inside the page. The embedded viewer retains Observatory, Journal, and New tab controls at the side on desktop and bottom on phones. Browsing returns to the same scene phase. Native HTML dialogs handle focus containment and Escape. Static project links remain available when JavaScript or catalog loading fails.
+
+This is a 2D illustrated scene with day/night artwork and a lightweight Canvas atmosphere layer. It is not a Blender model or a freely navigable 3D environment. It uses no WebGL library, npm dependencies, or external fonts. Both scene images together are about 350 KB. See [scene decisions and review limits](docs/SCENE.md).
+
+## Local preview and checks
+
+Node 22 or newer runs the maintenance commands. Serve over HTTP so browser JavaScript modules can load:
 
 ```sh
-node --test tests/catalog.test.mjs
-node scripts/refresh-catalog.mjs
+node --test tests/*.test.mjs
+node scripts/check-site.mjs
 node scripts/export-site.mjs
 python3 -m http.server 8000 --directory _site
 ```
 
-Open `http://localhost:8000`. Refresh requires network access; export and tests use the committed snapshot. An optional `GITHUB_TOKEN` can raise the refresh API allowance, and is never included in the exported site.
+Open `http://localhost:8000`. Tests and export use the committed catalog and need no GitHub connection. `node scripts/refresh-catalog.mjs` refreshes it from the public API when wanted. An optional `GITHUB_TOKEN` raises the API allowance; it is never included in the exported site.
 
-## Curation and automatic updates
+The tests check the cycle seam, pause/suspension, manual phase selection, portrait hotspot bounds, journal filtering, public-only catalog rules, invalid media, and inert serialization. Source checks verify HTML IDs, control references, required files, and the image budget. These checks do not establish actual browser layout, focus behavior, or touch quality.
 
-Edit `data/curation.json`. `featured` sets the order of favorites. `exclude` hides repositories such as this portfolio and the profile README repository. Entries under `projects` can override title, summary, description, category, and local-use requirements. Adding a project does not require scene changes.
+## Favorites and automatic updates
 
-The public GitHub API supplies names, descriptions, URLs, language, fork/archive status, and update dates. Pagination is supported; only explicitly public repositories owned by the configured account are accepted. New eligible repositories enter All projects automatically. Favorites stay deliberate: pin changes do not silently rearrange the front room. Review the GitHub pins and edit `featured` when desired.
+Edit `data/curation.json`. `featured` chooses the order of favorites. `exclude` hides infrastructure repositories such as the portfolio and profile README. Overrides under `projects` control title, summary, description, category, requirements, and optional media. No scene changes are needed when adding projects.
 
-`data/catalog.js` is a committed starting snapshot. Actions refreshes it during deployment, without committing daily date changes to the source branch. To update the committed snapshot, run the refresh command and commit both `data/catalog.js` and `index.html`.
+The public GitHub API imports names, descriptions, URLs, language, fork/archive status, and update dates with pagination. Only explicitly public repositories owned by the configured account are accepted. New eligible projects enter All projects automatically. Favorites remain deliberate; changed pins do not automatically reorder them.
 
-The workflow refreshes on main pushes, daily at 06:17 UTC, and manual runs. API errors, invalid data, or a missing favorite stop deployment and leave the previous live site in place. Changes to other repositories are picked up at the next refresh. GitHub schedules are best effort and can be disabled after 60 days of repository inactivity; re-enable the workflow in Actions and run it manually when necessary. [GitHub schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+The committed `data/catalog.js` is the starting snapshot. Actions refreshes the deployed artifact without making daily source commits. To update the committed snapshot, run the refresh command and commit both `data/catalog.js` and `index.html`.
 
-## Existing media and demos
+The workflow refreshes on main pushes, daily at 06:17 UTC, and manual runs. Retrieval errors, invalid data, and missing favorites stop deployment, preserving the last successful live site. Other repositories' changes arrive at the next refresh. Scheduled workflows are best effort and may be disabled after 60 days of repository inactivity; re-enable and manually run them in Actions when needed. [GitHub schedule reference](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
 
-Only explicit curated HTTPS links become demo or image controls. Discovery does not crawl demos, capture screenshots, or change showcased repositories.
+## Existing demos and images
 
 - Golf, Probably: existing Pages demo and first-hole screenshot.
-- Kinwild Living World: existing Pages demo, distinct from the Kinwild Creature Creator repository.
-- artpipeline: existing README animation. Reduced-motion visitors receive a link instead of an automatically animated GIF.
+- Kinwild Living World: existing Pages demo, separate from the Creature Creator repository.
+- artpipeline: existing README animation; reduced-motion visitors get an external animation link.
 
-To add existing media later, set `image` and `imageAlt`, or `demo`. Set `embed: true` only for a trusted demo checked to work in an iframe. The two initial demos responded with HTTP 200 and no blocking frame headers on 2026-09-11; this is not a runtime or mobile compatibility guarantee. New-tab opening always remains available. GitHub repository pages open externally. Never proxy around a demo's embedding restrictions.
+Only explicit curated HTTPS links become media controls. Set `demo`, and `embed: true` only for a trusted demo verified to support an iframe. Set `image` with descriptive `imageAlt` for existing media. The initial URLs returned HTTP 200 and the demo responses had no blocking frame headers on 2026-09-11; runtime and mobile compatibility still need direct review. Source pages always open on GitHub. No proxy bypasses embedding restrictions, and no demos or screenshots are generated for other projects.
 
-## Add the radio recording later
+## Add your radio recording
 
-Place your audio at `assets/audio/observatory.mp3`, then set:
+Place the recording at `assets/audio/observatory.mp3`, set `audio` in curation to `assets/audio/observatory.mp3`, refresh the catalog, and deploy. HTTPS audio URLs are also accepted. Until then leave `audio: null`. Playback is opt-in, loops at a gentle default volume, and can be stopped from the radio or visible button. No audio autoplays with the visual cycle.
 
-```json
-"audio": "assets/audio/observatory.mp3"
-```
+## GitHub Pages and review
 
-Refresh the catalog and deploy. HTTPS audio URLs are also accepted. The radio starts silent, begins only after a tap, and shows notes after playback succeeds. Tapping the radio, notes, or visible Radio button pauses it. With `audio: null`, the control says it is waiting for a record; no substitute audio is generated.
+Pages Source should be **GitHub Actions**. The workflow builds PRs into downloadable artifacts and only deploys `main`. For a PR preview, download the `github-pages` artifact from its successful Actions run, extract the ZIP and its `artifact.tar`, then serve that folder with a local HTTP server. No PR deployment or third-party hosting service is configured. Merging to main triggers the live deployment. [GitHub custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
-## GitHub Pages deployment
+Before merging the visual revision, inspect desktop and mobile layouts, portrait and landscape, text enlargement, keyboard focus, reduced motion, missing images, both demos, the return controls, and intermediate cycle phases. The earlier local browser permission block prevented that review in this workspace; it was not bypassed. This revision must be reviewed visually before it replaces the live page.
 
-Set **Settings → Pages → Build and deployment → Source → GitHub Actions**. Merge the reviewed change into `main`; the Observatory Pages workflow will build and deploy `_site`. PRs build an artifact but never deploy. A manual workflow run from `main` refreshes and republishes. [GitHub custom workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+The export contains only the page, app assets, public catalog, and existing `og.png`. The share image is still the prior design pending approval of the new implementation. The first Observatory is recoverable at `37e3947d49c7d3425a65acb52c1c4d1ef0b02c4a`; the original portfolio at `7743e44b81ef4677dcee9d056b0ea998c1e5879e`. Revert the relevant change to roll back. The separate yellowumbrella.group business site is not deployed from this repository.
 
-The workflow exports only the page, app assets, public catalog, and existing `og.png`. Existing social art is preserved. The previous portfolio is recoverable at commit `7743e44b81ef4677dcee9d056b0ea998c1e5879e`; revert the observatory change to restore it, then restore the previous Pages publishing source if rolling back the workflow as well.
-
-The separate business site at yellowumbrella.group has its own deployment path. This repository must not be replaced with the business site's HTML.
-
-## Before release
-
-Check 320/390/768/1440 px layouts, a real iOS/Android phone, portrait/landscape scrolling, keyboard and dialog focus, text enlargement, reduced motion, WebGL/CDN failure, both embedded demos, and the return bar. The supplied recording can be checked when it exists. Source tests cover catalog filtering, failed refresh conditions, optional media, and inert metadata serialization; they do not establish visual quality or touch performance.
-
-Project decisions and maintenance lessons are in [docs/WORKFLOW_TRUTHS.md](docs/WORKFLOW_TRUTHS.md).
+Maintenance lessons are kept in [docs/WORKFLOW_TRUTHS.md](docs/WORKFLOW_TRUTHS.md).
