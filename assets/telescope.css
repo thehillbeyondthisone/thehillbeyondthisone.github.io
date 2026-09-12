@@ -1,0 +1,50 @@
+/* A full-screen optical instrument: one figure, one focus. */
+.sky-dialog.telescope {--star-color:237 208 147;isolation:isolate;background:#030811;color:#f3efe5;padding:0;overflow-y:auto;overflow-x:hidden;}
+.sky-dialog.telescope[open] {display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(260px,1fr) auto auto;gap:0;align-items:stretch;justify-content:normal;}
+.telescope #sky-canvas {position:absolute;inset:0;width:100%;height:100%;z-index:-3;cursor:default;}
+.lens-vignette {position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,transparent 20%,#02061020 55%,#02050ccf 100%);}
+.telescope-header {display:flex;align-items:center;justify-content:space-between;padding:25px 38px 0;gap:20px;z-index:2;}
+.telescope-header .eyebrow {font-size:11px;letter-spacing:.22em;color:#c4c5bf;margin:0;}
+.telescope-subtitle {font:17px Georgia;color:#d4cab6;margin:8px 0 0;}
+.scope-close {display:flex;align-items:center;gap:15px;min-height:48px;background:#060e1766;color:#d7dbda;padding:8px 13px;border:1px solid #b9cbd326;border-radius:30px;font-size:13px;}
+.scope-close:hover {background:#b9cbd31c;}
+.scope-stage {position:relative;display:grid;align-items:center;justify-items:center;min-height:0;margin:0 auto;width:100%;max-width:1440px;}
+.lens-rings {position:absolute;height:min(62vh,680px);aspect-ratio:1;border:1px solid #aec6d329;border-radius:50%;pointer-events:none;box-shadow:0 0 0 13px #96b5c006,0 0 0 14px #a9c9d110,0 0 0 40px #9ac0d002;}
+.lens-rings::before {content:'';position:absolute;inset:12px;border:1px dashed #bed3d421;border-radius:50%;}
+.lens-rings::after {content:'';position:absolute;inset:-28px;border:1px solid #c6d8d10c;border-radius:50%;}
+.lens-rings span {position:absolute;color:#a9bdbb80;font:10px monospace;letter-spacing:.2em;}
+.lens-rings span:nth-child(1){top:-27px;left:50%;}.lens-rings span:nth-child(2){right:-28px;top:50%;}.lens-rings span:nth-child(3){bottom:-27px;left:50%;}.lens-rings span:nth-child(4){left:-28px;top:50%;}
+.constellation-display {width:min(62vh,680px,75vw);aspect-ratio:1;position:relative;display:grid;place-items:center;}
+.hero-constellation {width:100%;height:100%;overflow:visible;color:rgb(var(--star-color));animation:scope-arrive 1s ease-out both;}
+.constellation-haze {fill:none;stroke:currentColor;stroke-width:.5;opacity:.24;filter:blur(.6px);}
+.constellation-thread {fill:none;stroke:currentColor;stroke-width:.14;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0;animation:trace-stars 1.4s ease-out backwards;opacity:.75;}
+.star-aura {fill:currentColor;opacity:.22;filter:blur(1.2px);}.star-core {fill:#fffff5;filter:drop-shadow(0 0 .5px currentColor) drop-shadow(0 0 1.6px currentColor);}
+.star-spike {fill:none;stroke:#fff6dc;stroke-width:.09;opacity:.85;}.star-ring {fill:none;stroke:currentColor;stroke-width:.06;opacity:.7;}
+.celestial-star {animation:star-arrive 1.1s ease-out backwards;}
+.scope-arrow {position:absolute;top:50%;transform:translateY(-50%);width:74px;height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#ede7d8;background:#0b162580;border:1px solid #c7d0ce40;border-radius:45px;transition:background .2s,box-shadow .2s;z-index:3;}
+.scope-arrow svg {width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;}.scope-arrow span{font-size:11px;letter-spacing:.04em;}
+.scope-prev {left:max(4vw,24px);}.scope-next {right:max(4vw,24px);}
+.scope-arrow:hover {background:#c2d5e12b;box-shadow:0 0 28px rgb(var(--star-color)/.13);}.scope-arrow:active {background:#c2d5e140;}
+.scope-information {position:relative;max-width:850px;width:100%;justify-self:center;text-align:center;padding:8px 24px 20px;}
+.scope-kicker {font:11px/1.4 monospace;color:rgb(var(--star-color));letter-spacing:.22em;text-transform:uppercase;margin:0 0 12px;}
+.scope-project-title {font:normal clamp(30px,3.6vw,52px)/1.05 Georgia,serif;letter-spacing:-.035em;margin:0 0 14px;text-shadow:0 0 35px rgb(var(--star-color)/.18);}
+.scope-description {max-width:620px;margin:0 auto;font-size:15px;line-height:1.65;color:#b8c5cb;}
+.scope-actions {display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;margin:20px 0 0;}
+.scope-primary,.scope-secondary,.scope-source {display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:14px;min-height:46px;padding:10px 20px;border-radius:3px;}
+.scope-primary {color:#101823;background:rgb(var(--star-color));border:1px solid rgb(var(--star-color));}.scope-primary:hover{filter:brightness(1.12);}
+.scope-secondary {color:#ece6d5;background:#0a142b55;border:1px solid #bdcace50;}.scope-secondary:hover{background:#d4e0e31a;}.scope-source{color:#aebfc9;padding-inline:8px;}.scope-source:hover{color:#fff;}
+.scope-footer {display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 38px;padding:16px 0 20px;border-top:1px solid #c4d5da1c;font:10px/1.5 monospace;letter-spacing:.1em;color:#8fa2b1;}
+#sky-position{display:flex;align-items:center;gap:8px;}#sky-position>span:last-child{margin-left:10px;color:#e7dec9;white-space:nowrap;}.scope-position-dot{width:4px;height:4px;border-radius:50%;background:#91a4af50;}.scope-position-dot.current{background:rgb(var(--star-color));box-shadow:0 0 8px rgb(var(--star-color)/.6);}
+@keyframes trace-stars {from{stroke-dashoffset:1;}to{stroke-dashoffset:0;}}
+@keyframes scope-arrive {from{opacity:0;transform:scale(.93) rotate(-3deg);filter:blur(3px);}to{opacity:1;transform:none;filter:none;}}
+@keyframes star-arrive {from{opacity:0;}to{opacity:1;}}
+@media(max-width:700px){
+ .sky-dialog.telescope[open]{grid-template-rows:auto minmax(320px,1fr) auto auto;}
+ .telescope-header{padding:20px 18px 0;gap:8px;}.telescope-header .eyebrow{font-size:9px;letter-spacing:.12em;}.telescope-subtitle{font-size:15px;}.scope-close{padding:8px;min-width:44px;}.scope-close span{display:none;}
+ .constellation-display{width:84vw;max-width:480px;}.lens-rings{height:auto;width:82vw;max-width:480px;}
+ .scope-arrow{width:46px;height:58px;background:#101c2bd9;}.scope-arrow svg{width:26px;height:26px;}.scope-arrow span{display:none;}.scope-prev{left:8px;}.scope-next{right:8px;}
+ .scope-information{padding:10px 22px 20px;}.scope-kicker{font-size:10px;letter-spacing:.13em;}.scope-project-title{font-size:34px;}.scope-description{font-size:14px;}.scope-actions{gap:8px;margin-top:16px;}.scope-primary,.scope-secondary{padding:10px 13px;}.scope-source{min-height:40px;}
+ .scope-footer{margin:0 22px;padding:13px 0 18px;justify-content:center;}.scope-footer>span:first-child,.scope-footer>span:last-child{display:none;}
+}
+@media(max-height:650px) and (min-width:701px){.sky-dialog.telescope[open]{grid-template-rows:auto minmax(230px,1fr) auto auto;}.telescope-header{padding-top:14px;}.constellation-display{width:48vh;}.lens-rings{height:48vh;}.scope-project-title{font-size:30px;}.scope-information{padding-bottom:12px;}.scope-actions{margin-top:10px;}.scope-footer{padding:10px 0;}}
+@media(prefers-reduced-motion:reduce){.hero-constellation,.constellation-thread,.celestial-star{animation:none!important;}}

@@ -21,6 +21,7 @@
 <meta name="twitter:image" content="https://thehillbeyondthisone.github.io/og.png">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/telescope.css">
 <link rel="preload" as="image" href="assets/scene/night.webp" fetchpriority="high">
 </head>
 <body>
@@ -108,10 +109,18 @@
   <div class="phase-presets" aria-label="Choose the light"><button data-phase="0.23">Dawn</button><button data-phase="0.5">Day</button><button data-phase="0.79">Dusk</button><button data-phase="0">Night</button></div>
   <button class="primary wide" id="pause-time" aria-pressed="false">Pause time</button><p class="fine-print" id="motion-explanation">One gentle cycle takes about 20 minutes.</p>
 </dialog>
-<dialog class="sky-dialog" id="sky-dialog" aria-labelledby="sky-title">
-  <header class="sky-top"><div><p class="eyebrow">THROUGH THE TELESCOPE</p><h2 id="sky-title">A constellation of projects.</h2></div><button class="icon-button" data-close="sky-dialog" aria-label="Return to the observatory"><svg class="icon"><use href="#i-close"/></svg></button></header>
-  <div class="star-atlas"><div class="atlas-field"><canvas id="sky-canvas" aria-hidden="true"></canvas><div id="constellations" class="constellations" aria-label="Pinned repository constellations"></div></div><aside class="star-detail" id="star-detail" aria-live="polite"></aside></div>
-  <p class="sky-hint">Choose a constellation to discover a pinned project. <span>Tab between constellations · Enter to select · Escape to return.</span></p>
+<dialog class="sky-dialog telescope" id="sky-dialog" aria-labelledby="sky-title">
+  <canvas id="sky-canvas" aria-hidden="true"></canvas>
+  <div class="lens-vignette" aria-hidden="true"></div>
+  <header class="telescope-header"><div><p class="eyebrow">YELLOW UMBRELLA OBSERVATORY</p><p class="telescope-subtitle">The pinned sky</p></div><button class="scope-close" data-close="sky-dialog" aria-label="Return to the observatory"><span>Back to earth</span><svg class="icon"><use href="#i-close"/></svg></button></header>
+  <div class="scope-stage" aria-label="Constellation viewer">
+    <div class="lens-rings" aria-hidden="true"><span>N</span><span>E</span><span>S</span><span>W</span></div>
+    <button class="scope-arrow scope-prev" id="previous-star" aria-label="Previous constellation"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m19 7-9 9 9 9M11 16h16"/></svg><span>Previous</span></button>
+    <div id="constellations" class="constellation-display"></div>
+    <button class="scope-arrow scope-next" id="next-star" aria-label="Next constellation"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m13 7 9 9-9 9M21 16H5"/></svg><span>Next</span></button>
+  </div>
+  <section class="scope-information" id="star-detail" aria-live="polite" aria-atomic="true"></section>
+  <footer class="scope-footer"><span>FOUR SMALL WORLDS. ONE OPEN SKY.</span><span id="sky-position"></span><span>← → to explore</span></footer>
 </dialog>
 <dialog class="viewer" id="viewer" aria-labelledby="viewer-title">
   <nav class="viewer-bar" aria-label="Return and project controls"><button id="back-world"><svg class="icon"><use href="#i-back"/></svg><span>Observatory</span></button><span class="viewer-label" id="viewer-title"></span><button id="switch-project"><svg class="icon"><use href="#i-book"/></svg><span>Journal</span></button><a id="external-demo" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="#i-arrow"/></svg><span>New tab</span></a></nav>
