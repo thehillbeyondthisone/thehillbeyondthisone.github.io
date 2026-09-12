@@ -233,6 +233,11 @@ function init() {
   $('back-world').addEventListener('click', () => $('viewer').close());
   $('switch-project').addEventListener('click', openJournal);
   $('viewer').addEventListener('close', clearViewer);
+  $('demo-frame').addEventListener('load', () => {
+    if (!$('demo-frame').hasAttribute('src')) return;
+    clearTimeout(viewerTimer);
+    $('viewer-help').hidden = true;
+  });
   $('dismiss-help').addEventListener('click', () => { $('viewer-help').hidden = true; });
   $('pause-time').addEventListener('click', () => scene?.setPaused(!scene.paused));
   $('time-range').addEventListener('input', event => scene?.choosePhase(Number(event.target.value) / 1000, {immediate: true}));
