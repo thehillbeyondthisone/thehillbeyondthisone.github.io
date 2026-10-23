@@ -43,7 +43,7 @@
     <img class="scene-image day-image" id="day-image" src="assets/scene/day.webp" width="1698" height="926" alt="" aria-hidden="true" decoding="async">
     <div class="twilight-wash" aria-hidden="true"></div>
     <canvas id="ambience" aria-hidden="true"></canvas>
-    <button class="hotspot telescope-spot enhanced-control" data-sky aria-label="Look through the telescope"><span class="spot-dot"></span><span class="spot-label">Explore pinned stars</span></button>
+    <button class="hotspot telescope-spot enhanced-control" data-sky aria-label="Look through the telescope"><span class="spot-dot"></span><span class="spot-label">Explore the sky</span></button>
     <button class="hotspot journal-spot enhanced-control" data-journal aria-label="Open the project journal"><span class="spot-dot"></span><span class="spot-label">Open project journal</span></button>
     <button class="hotspot radio-spot enhanced-control" data-radio aria-label="Turn radio on" aria-pressed="false"><span class="spot-dot"></span><span class="spot-label">Radio · coming soon</span><span class="music-notes" aria-hidden="true"><i>♪</i><i>♫</i><i>♪</i></span></button>
   </div>
@@ -56,7 +56,7 @@
   <div class="scene-footer">
     <button class="phase-link enhanced-control" id="phase-link" data-time><span class="phase-dot"></span><span id="phase-label">Dusk</span><span class="phase-state" id="phase-state">Time is passing</span></button>
     <nav class="dock" aria-label="Observatory controls">
-      <a class="journal-launch" href="#fallback-list" data-journal><svg class="icon"><use href="#i-book"/></svg><span>Project journal<small id="featured-count">4 selected projects</small></span><span class="launch-arrow">↗</span></a>
+      <a class="journal-launch" href="#fallback-list" data-journal><svg class="icon"><use href="#i-book"/></svg><span>Project journal<small id="featured-count">5 selected projects</small></span><span class="launch-arrow">↗</span></a>
       <button class="dock-button enhanced-control" data-radio aria-pressed="false" aria-label="Turn radio on"><svg class="icon"><use href="#i-radio"/></svg><span id="radio-label">Radio off</span></button>
       <button class="dock-button enhanced-control" data-sky aria-label="Look through the telescope"><svg class="icon"><use href="#i-sky"/></svg><span>Telescope</span></button>
       <button class="dock-button enhanced-control" data-time aria-label="Change or pause time"><svg class="icon"><use href="#i-time"/></svg><span>Time</span></button>
@@ -75,9 +75,11 @@
 <a href="https://github.com/thehillbeyondthisone/kinwild-world" target="_blank" rel="noopener noreferrer">Kinwild · Living World<small>A living miniature world of generated plants and curious creatures.</small></a>
 <a href="https://github.com/thehillbeyondthisone/PastMidnight" target="_blank" rel="noopener noreferrer">Past Midnight<small>A love letter to the screensavers that kept old computers company.</small></a>
 <a href="https://github.com/thehillbeyondthisone/RubiKit" target="_blank" rel="noopener noreferrer">RubiKit<small>A modular toolkit and real-time dashboards for Anarchy Online.</small></a>
+<a href="https://github.com/thehillbeyondthisone/seven-hunters" target="_blank" rel="noopener noreferrer">Seven Hunters<small>Three keepers vanished. Tonight, the light is yours.</small></a>
 <a href="https://github.com/thehillbeyondthisone/Sketchbook" target="_blank" rel="noopener noreferrer">Sketchbook<small>A fork of swift502&#39;s Three.js playground for characters and vehicles.</small></a>
 <a href="https://github.com/thehillbeyondthisone/redesigned-octo-couscous" target="_blank" rel="noopener noreferrer">Spanish Ghost Text<small>A local speech transcription and Spanish text-assistance experiment.</small></a>
 <a href="https://github.com/thehillbeyondthisone/easy_steam_license_remover" target="_blank" rel="noopener noreferrer">Steam License Remover<small>An interactive utility for managing free Steam licenses.</small></a>
+<a href="https://github.com/thehillbeyondthisone/theGame" target="_blank" rel="noopener noreferrer">theGame<small>A red disc, a violet funnel, and one more try.</small></a>
 <a href="https://github.com/thehillbeyondthisone/WhatIfWe" target="_blank" rel="noopener noreferrer">What if we…<small>A shared place to plan dates and find ideas you both love.</small></a>
 <a href="https://github.com/thehillbeyondthisone/WoobleTracker" target="_blank" rel="noopener noreferrer">Woobles Tracker<small>A small home for craft projects, progress, photos, and notes.</small></a>
 <a href="https://github.com/thehillbeyondthisone/Xanalytics" target="_blank" rel="noopener noreferrer">Xanalytics<small>Turn local game logs into useful loot and experience metrics.</small></a>
@@ -91,13 +93,13 @@
   <div class="journal-scroll" id="journal-scroll">
     <section id="collection-view">
       <h2 id="journal-title" tabindex="-1">Project journal</h2><p class="journal-intro">Games to play, worlds to wander, and tools from the workshop.</p>
-      <div class="journal-filters" aria-label="Project selection"><button id="show-featured" aria-pressed="true">Pinned projects <span id="favorite-total">4</span></button><button id="show-all" aria-pressed="false">All projects <span id="all-total">15</span></button></div>
+      <div class="journal-filters" aria-label="Project selection"><button id="show-featured" aria-pressed="true">Pinned projects <span id="favorite-total">5</span></button><button id="show-all" aria-pressed="false">All projects <span id="all-total">17</span></button></div>
       <label class="search-label" for="project-search">Find a project<input id="project-search" type="search" placeholder="Search the journal…" autocomplete="off"></label>
       <p class="result-count" id="catalog-count" role="status"></p><div id="project-list" class="project-list"></div><p id="no-results" hidden>No projects match that search.</p>
       <footer class="journal-footer"><a href="https://github.com/thehillbeyondthisone" target="_blank" rel="noopener noreferrer">More on GitHub ↗</a><p id="updated"></p></footer>
     </section>
     <section id="detail-view" hidden>
-      <button class="text-button" id="back-collection"><svg class="icon"><use href="#i-back"/></svg>All journal entries</button>
+      <div class="detail-backlinks"><button class="text-button" id="back-collection"><svg class="icon"><use href="#i-back"/></svg>All journal entries</button><button class="text-button" id="back-sky" hidden>Return to the sky ↗</button></div>
       <p class="eyebrow" id="detail-category"></p><h2 id="detail-title" tabindex="-1"></h2><p id="detail-description" class="detail-description"></p><div id="detail-media"></div><div id="detail-meta" class="detail-meta"></div><p id="detail-requirement" class="requirement" hidden></p><div id="detail-actions" class="detail-actions"></div>
     </section>
   </div>
@@ -109,18 +111,21 @@
   <div class="phase-presets" aria-label="Choose the light"><button data-phase="0.23">Dawn</button><button data-phase="0.5">Day</button><button data-phase="0.79">Dusk</button><button data-phase="0">Night</button></div>
   <button class="primary wide" id="pause-time" aria-pressed="false">Pause time</button><p class="fine-print" id="motion-explanation">One gentle cycle takes about 20 minutes.</p>
 </dialog>
-<dialog class="sky-dialog telescope" id="sky-dialog" aria-labelledby="sky-title">
+<dialog class="sky-dialog telescope" id="sky-dialog" aria-labelledby="sky-title" aria-describedby="sky-intro">
   <canvas id="sky-canvas" aria-hidden="true"></canvas>
   <div class="lens-vignette" aria-hidden="true"></div>
-  <header class="telescope-header"><div><p class="eyebrow">YELLOW UMBRELLA OBSERVATORY</p><p class="telescope-subtitle">The pinned sky</p></div><button class="scope-close" data-close="sky-dialog" aria-label="Return to the observatory"><span>Back to earth</span><svg class="icon"><use href="#i-close"/></svg></button></header>
-  <div class="scope-stage" aria-label="Constellation viewer">
-    <div class="lens-rings" aria-hidden="true"><span>N</span><span>E</span><span>S</span><span>W</span></div>
-    <button class="scope-arrow scope-prev" id="previous-star" aria-label="Previous constellation"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m19 7-9 9 9 9M11 16h16"/></svg><span>Previous</span></button>
-    <div id="constellations" class="constellation-display"></div>
-    <button class="scope-arrow scope-next" id="next-star" aria-label="Next constellation"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m13 7 9 9-9 9M21 16H5"/></svg><span>Next</span></button>
+  <header class="telescope-header"><div><p class="eyebrow">YELLOW UMBRELLA · FIELD TELESCOPE</p><h2 id="sky-title">A little further.</h2><p id="sky-intro">Every constellation is something I made. Pick a light. See where it leads.</p></div><div class="scope-header-actions"><button class="scope-journal" data-journal>Just show me the work ↗</button><button class="scope-close" data-close="sky-dialog" aria-label="Return to the observatory"><span>Back to earth</span><svg class="icon"><use href="#i-close"/></svg></button></div></header>
+  <div class="scope-toolbar"><div class="scope-view-switch" role="group" aria-label="Telescope view"><button id="sky-map-view" aria-pressed="true">Sky map</button><button id="sky-focus-view" aria-pressed="false">In focus</button></div><p id="sky-progress" role="status">An open sky</p><button class="scope-mobile-close" data-close="sky-dialog" aria-label="Return to the observatory">×</button><button id="find-signal" class="scope-signal">Find a signal <span aria-hidden="true">↗</span></button></div>
+  <div class="scope-workspace">
+    <div class="scope-stage" id="scope-stage" aria-label="Explore project constellations">
+      <div class="scope-grid" aria-hidden="true"></div>
+      <div class="scope-coordinates" aria-hidden="true"><span>IMAGINED SKY / REAL PROJECTS</span><span>YU · 01</span></div>
+      <div id="constellations" class="constellation-display"></div>
+      <div class="scope-navigation"><button id="previous-star" aria-label="Previous constellation">← <span>Previous</span></button><span id="sky-position">Choose a constellation</span><button id="next-star" aria-label="Next constellation"><span>Next</span> →</button></div>
+    </div>
+    <section class="scope-information" id="star-detail" aria-label="Selected discovery" aria-live="polite" aria-atomic="true"></section>
   </div>
-  <section class="scope-information" id="star-detail" aria-live="polite" aria-atomic="true"></section>
-  <footer class="scope-footer"><span>FOUR SMALL WORLDS. ONE OPEN SKY.</span><span id="sky-position"></span><span>← → to explore</span></footer>
+  <footer class="scope-footer"><span id="sky-footnote">A small sky. Take your time.</span><span>← → to wander · Escape to return</span><button id="reset-discoveries" hidden>Clear field notes</button></footer>
 </dialog>
 <dialog class="viewer" id="viewer" aria-labelledby="viewer-title">
   <nav class="viewer-bar" aria-label="Return and project controls"><button id="back-world"><svg class="icon"><use href="#i-back"/></svg><span>Observatory</span></button><span class="viewer-label" id="viewer-title"></span><button id="switch-project"><svg class="icon"><use href="#i-book"/></svg><span>Journal</span></button><a id="external-demo" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="#i-arrow"/></svg><span>New tab</span></a></nav>

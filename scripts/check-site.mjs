@@ -5,7 +5,7 @@ const root = new URL('../', import.meta.url);
 const html = await readFile(new URL('index.html', root), 'utf8');
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 assert.equal(new Set(ids).size, ids.length, 'Duplicate HTML IDs');
-for (const path of ['assets/app.js', 'assets/world.js']) {
+for (const path of ['assets/app.js', 'assets/world.js', 'assets/telescope.mjs']) {
   const source = await readFile(new URL(path, root), 'utf8');
   const references = [...source.matchAll(/(?:\$\(|getElementById\()'([^']+)'\)/g)].map(match => match[1]);
   for (const id of references) assert.ok(ids.includes(id), `Missing ${id} used by ${path}`);

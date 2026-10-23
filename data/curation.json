@@ -1,9 +1,10 @@
 {
   "owner": "thehillbeyondthisone",
   "featured": [
+    "seven-hunters",
+    "theGame",
     "GolfProbably",
     "Kinwild",
-    "RubiKit",
     "Hydra"
   ],
   "exclude": [
@@ -12,6 +13,28 @@
   ],
   "audio": null,
   "projects": {
+    "seven-hunters": {
+      "title": "Seven Hunters",
+      "category": "Games",
+      "summary": "Three keepers vanished. Tonight, the light is yours.",
+      "description": "A first-person narrative exploration game on a remote Scottish lighthouse island in January 1901. Explore Eilean Mòr, learn the keeper's duties, and keep the light burning. A playable work in progress built with JavaScript, WGSL, and a custom WebGPU renderer.",
+      "requirement": "Requires a WebGPU-enabled browser. Desktop and touch controls are available.",
+      "demo": "https://thehillbeyondthisone.github.io/seven-hunters/",
+      "embed": false,
+      "image": "https://raw.githubusercontent.com/thehillbeyondthisone/seven-hunters/main/docs/screenshots/game-fApproach.png",
+      "imageAlt": "The Seven Hunters lighthouse station above the Atlantic in the low winter sun"
+    },
+    "theGame": {
+      "title": "theGame",
+      "category": "Games",
+      "summary": "A red disc, a violet funnel, and one more try.",
+      "description": "A WebXR fan prototype inspired by the headset game in Star Trek: The Next Generation. Guide a disc into a shifting funnel through ten layouts, a 60-second score run, or untimed free play. Built with TypeScript and super-three, with gaze, hand, and controller input on Quest 3 plus desktop and touch play.",
+      "requirement": "Open in Quest Browser for spatial play, or use mouse and touch controls.",
+      "demo": "https://thehillbeyondthisone.github.io/theGame/",
+      "embed": false,
+      "image": "https://raw.githubusercontent.com/thehillbeyondthisone/theGame/main/docs/reference/sttng-episode/implementation-4x3-2026-09-28.png",
+      "imageAlt": "A red disc and violet funnel above an orange circle field in theGame"
+    },
     "GolfProbably": {
       "title": "Golf, Probably",
       "category": "Games",
