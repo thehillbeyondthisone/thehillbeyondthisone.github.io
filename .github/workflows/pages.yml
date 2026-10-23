@@ -30,6 +30,8 @@ jobs:
           node --check assets/app.js
           node --check assets/world.js
           node --check assets/sky.js
+          node --check assets/telescope.mjs
+          node --check assets/exploration.mjs
           node --test tests/*.test.mjs
           node scripts/check-site.mjs
       - name: Refresh public repository snapshot

@@ -7,7 +7,7 @@ const $ = id => document.getElementById(id);
 const data = window.OBSERVATORY_DATA;
 const preference = matchMedia('(prefers-reduced-motion: reduce)');
 let scene = null, sky = null, selected = null, mode = 'featured';
-let listScroll = 0, lastEntry = null, toastTimer = 0, viewerTimer = 0;
+let listScroll = 0, lastEntry = null, toastTimer = 0, viewerTimer = 0, skyEntry = false;
 let audio = null, audioPending = false;
 const dialogs = ['journal', 'time-dialog', 'sky-dialog', 'viewer'].map($);
 
@@ -83,11 +83,14 @@ function showCollection({focus = true} = {}) {
 }
 function openJournal(event) {
   event?.preventDefault();
+  skyEntry = false;
   showCollection({focus: false});
   openDialog('journal');
   $('journal-title').focus({preventScroll: true});
 }
 function showProject(project, opener) {
+  if (opener) skyEntry = false;
+  $('back-sky').hidden = !skyEntry;
   selected = project;
   lastEntry = opener;
   listScroll = $('journal-scroll').scrollTop;
@@ -210,7 +213,7 @@ async function toggleRadio() {
 function init() {
   if (!data || !Array.isArray(data.projects) || !data.projects.length || !Array.isArray(data.featured)) return;
   if (typeof $('journal').showModal !== 'function') return;
-  renderProjects(); mountTelescope(data, project => { openDialog('journal'); showProject(project, null); });
+  renderProjects(); mountTelescope(data, project => { skyEntry = true; openDialog('journal'); showProject(project, null); });
   $('favorite-total').textContent = String(data.featured.length);
   $('all-total').textContent = String(data.projects.length);
   $('featured-count').textContent = `${data.featured.length} selected projects`;
@@ -220,8 +223,7 @@ function init() {
   document.querySelectorAll('[data-journal]').forEach(button => button.addEventListener('click', openJournal));
   document.querySelectorAll('[data-time]').forEach(button => button.addEventListener('click', () => openDialog('time-dialog')));
   document.querySelectorAll('[data-sky]').forEach(button => button.addEventListener('click', () => {
-    if (!sky) { notify('The telescope is resting. The journal is still open to explore.'); return; }
-    openDialog('sky-dialog'); $('next-star').focus();
+    openDialog('sky-dialog'); $('find-signal').focus();
   }));
   document.querySelectorAll('[data-radio]').forEach(button => button.addEventListener('click', toggleRadio));
   document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => $(button.dataset.close).close()));
@@ -237,6 +239,7 @@ function init() {
   $('show-all').addEventListener('click', () => { mode = 'all'; listScroll = 0; renderProjects(); });
   $('project-search').addEventListener('input', renderProjects);
   $('back-collection').addEventListener('click', () => showCollection());
+  $('back-sky').addEventListener('click', () => { openDialog('sky-dialog'); $('find-signal').focus({preventScroll:true}); });
   $('back-world').addEventListener('click', () => $('viewer').close());
   $('switch-project').addEventListener('click', openJournal);
   $('viewer').addEventListener('close', clearViewer);

@@ -17,3 +17,4 @@
 - A daylight endpoint needs different illumination and unlit windows, not just a brightness filter over night. Inspect intermediate blends for geometry drift.
 - Check portrait hotspot bounds independently of desktop framing; essential controls must remain directly available outside the image.
 - Name verification limits accurately. A passing build and a generated concept image are not evidence of a finished interactive mobile experience.
+- The telescope offers a labeled sky map and a focused view of the same curated work. Signals and related suggestions favor unseen projects; optional browser-local observations add continuity and can be reset. Keep every project and the direct journal path available, with still rendering for reduced motion and no completion requirement.

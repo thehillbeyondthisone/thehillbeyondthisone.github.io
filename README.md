@@ -6,7 +6,11 @@ A solitary observatory, a slowly changing sky, and a journal of games, tools, an
 
 The approved compact observatory artwork fills the scene. Desktop has a paper-toned journal on the right when opened; phones frame the tower and radio with the journal in a bottom sheet. The journal shows curated favorites and a searchable public catalog. Project entries have descriptions, source links, local requirements, and existing media when available.
 
-The 20-minute day–night cycle starts near dusk. Use Time to pause, hold dawn/day/dusk/night, or choose any point in between. Time holds while inspecting a project, looking through the telescope, viewing a demo, or leaving the tab. Reduced motion starts still, with an explicit option to resume. The telescope opens an imagined star field with optional drag, keyboard, and shooting-star interactions.
+The 20-minute day–night cycle starts near dusk. Use Time to pause, hold dawn/day/dusk/night, or choose any point in between. Time holds while inspecting a project, looking through the telescope, viewing a demo, or leaving the tab. Reduced motion starts still, with an explicit option to resume.
+
+The telescope has two views of five curated projects: Sky map shows the whole imagined sky, and In focus brings one constellation into the lens. Choose any labeled constellation, use Previous/Next or the arrow keys, or follow Find a signal to an unseen project. Each observation offers a short introduction, a direct demo or source link, field notes in the journal, and a related suggestion that prefers unseen work in the same category. Just show me the work opens the journal directly.
+
+Observation memory stays in the current browser when local storage is available. Clear field notes resets it; browsing also works when storage is unavailable. Every project remains accessible throughout, and the telescope keeps offering another stop after all five have been observed. Reduced motion holds the sky still and removes constellation drawing and transition animations while retaining every navigation control.
 
 The radio starts silent and awaits your recording. Notes appear only while audio is actually playing. A scene hotspot and visible dock control are provided for the journal, radio, and telescope; nothing requires discovering a hidden interaction.
 
@@ -19,6 +23,8 @@ This is a 2D illustrated scene with day/night artwork and a lightweight Canvas a
 Node 22 or newer runs the maintenance commands. Serve over HTTP so browser JavaScript modules can load:
 
 ```sh
+node --check assets/telescope.mjs
+node --check assets/exploration.mjs
 node --test tests/*.test.mjs
 node scripts/check-site.mjs
 node scripts/export-site.mjs
@@ -27,7 +33,7 @@ python3 -m http.server 8000 --directory _site
 
 Open `http://localhost:8000`. Tests and export use the committed catalog and need no GitHub connection. `node scripts/refresh-catalog.mjs` refreshes it from the public API when wanted. An optional `GITHUB_TOKEN` raises the API allowance; it is never included in the exported site.
 
-The tests check the cycle seam, pause/suspension, manual phase selection, portrait hotspot bounds, journal filtering, public-only catalog rules, invalid media, and inert serialization. Source checks verify HTML IDs, control references, required files, and the image budget. These checks do not establish actual browser layout, focus behavior, or touch quality.
+The tests check the cycle seam, pause/suspension, manual phase selection, portrait hotspot bounds, journal filtering, public-only catalog rules, invalid media, inert serialization, constellation membership, and release asset isolation. Telescope checks cover navigation wrapping, restoration of valid observation memory, unseen-project selection, and related suggestions. Source checks verify HTML IDs, app and telescope control references, required files, and the image budget. These checks do not establish actual browser layout, focus behavior, or touch quality.
 
 ## Favorites and automatic updates
 
@@ -41,6 +47,8 @@ The workflow refreshes on main pushes, daily at 06:17 UTC, and manual runs. Retr
 
 ## Existing demos and images
 
+- Seven Hunters: existing Pages game and lighthouse screenshot; opens directly in a WebGPU-enabled browser.
+- theGame: existing Pages WebXR prototype and gameplay screenshot; opens directly for Quest, desktop, or touch play.
 - Golf, Probably: existing Pages demo and first-hole screenshot.
 - Kinwild Living World: existing Pages demo, separate from the Creature Creator repository.
 - artpipeline: existing README animation; reduced-motion visitors get an external animation link.
@@ -55,7 +63,7 @@ Place the recording at `assets/audio/observatory.mp3`, set `audio` in curation t
 
 Pages Source should be **GitHub Actions**. The workflow builds PRs into downloadable artifacts and only deploys `main`. For a PR preview, download the `github-pages` artifact from its successful Actions run, extract the ZIP and its `artifact.tar`, then serve that folder with a local HTTP server. No PR deployment or third-party hosting service is configured. Merging to main triggers the live deployment. [GitHub custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
-Before merging the visual revision, inspect desktop and mobile layouts, portrait and landscape, text enlargement, keyboard focus, reduced motion, missing images, both demos, the return controls, and intermediate cycle phases. The earlier local browser permission block prevented that review in this workspace; it was not bypassed. This revision must be reviewed visually before it replaces the live page.
+Before merging the visual revision, inspect desktop and mobile layouts, portrait and landscape, text enlargement, keyboard focus, reduced motion, missing images, the curated demos, the return controls, and intermediate cycle phases. Also review both telescope views, signal navigation, related suggestions, observation restoration/reset, and the direct journal path. The earlier local browser permission block prevented that review in this workspace; it was not bypassed. This revision must be reviewed visually before it replaces the live page.
 
 The export contains only the page, app assets, public catalog, and existing `og.png`. The share image is still the prior design pending approval of the new implementation. The first Observatory is recoverable at `37e3947d49c7d3425a65acb52c1c4d1ef0b02c4a`; the original portfolio at `7743e44b81ef4677dcee9d056b0ea998c1e5879e`. Revert the relevant change to roll back. The separate yellowumbrella.group business site is not deployed from this repository.
 

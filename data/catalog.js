@@ -1,9 +1,10 @@
 window.OBSERVATORY_DATA = {
-  "generatedAt": "2026-09-12T02:08:53.928Z",
+  "generatedAt": "2026-10-23T05:05:58.311Z",
   "featured": [
+    "seven-hunters",
+    "theGame",
     "GolfProbably",
     "Kinwild",
-    "RubiKit",
     "Hydra"
   ],
   "audio": null,
@@ -153,6 +154,24 @@ window.OBSERVATORY_DATA = {
       "imageAlt": null
     },
     {
+      "id": 1404546966,
+      "name": "seven-hunters",
+      "title": "Seven Hunters",
+      "category": "Games",
+      "summary": "Three keepers vanished. Tonight, the light is yours.",
+      "description": "A first-person narrative exploration game on a remote Scottish lighthouse island in January 1901. Explore Eilean Mòr, learn the keeper's duties, and keep the light burning. A playable work in progress built with JavaScript, WGSL, and a custom WebGPU renderer.",
+      "requirement": "Requires a WebGPU-enabled browser. Desktop and touch controls are available.",
+      "url": "https://github.com/thehillbeyondthisone/seven-hunters",
+      "language": "JavaScript",
+      "fork": false,
+      "archived": false,
+      "updated": "2026-10-15T01:22:12Z",
+      "demo": "https://thehillbeyondthisone.github.io/seven-hunters/",
+      "embed": false,
+      "image": "https://raw.githubusercontent.com/thehillbeyondthisone/seven-hunters/main/docs/screenshots/game-fApproach.png",
+      "imageAlt": "The Seven Hunters lighthouse station above the Atlantic in the low winter sun"
+    },
+    {
       "id": 1354956315,
       "name": "Sketchbook",
       "title": "Sketchbook",
@@ -205,6 +224,24 @@ window.OBSERVATORY_DATA = {
       "embed": false,
       "image": null,
       "imageAlt": null
+    },
+    {
+      "id": 1402645072,
+      "name": "theGame",
+      "title": "theGame",
+      "category": "Games",
+      "summary": "A red disc, a violet funnel, and one more try.",
+      "description": "A WebXR fan prototype inspired by the headset game in Star Trek: The Next Generation. Guide a disc into a shifting funnel through ten layouts, a 60-second score run, or untimed free play. Built with TypeScript and super-three, with gaze, hand, and controller input on Quest 3 plus desktop and touch play.",
+      "requirement": "Open in Quest Browser for spatial play, or use mouse and touch controls.",
+      "url": "https://github.com/thehillbeyondthisone/theGame",
+      "language": "TypeScript",
+      "fork": false,
+      "archived": false,
+      "updated": "2026-10-08T16:43:03Z",
+      "demo": "https://thehillbeyondthisone.github.io/theGame/",
+      "embed": false,
+      "image": "https://raw.githubusercontent.com/thehillbeyondthisone/theGame/main/docs/reference/sttng-episode/implementation-4x3-2026-09-28.png",
+      "imageAlt": "A red disc and violet funnel above an orange circle field in theGame"
     },
     {
       "id": 1095183694,
